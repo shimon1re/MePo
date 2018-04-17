@@ -23,18 +23,7 @@ public class TeacherActivity extends AppCompatActivity {
             startActivity(new Intent(this, LoginActivity.class));
         }
 
-        mtv_id = findViewById(R.id.tv_id);
-        mtv_fName = findViewById(R.id.tv_firstName);
-        mtv_lName = findViewById(R.id.tv_lastName);
-        mtv_email = findViewById(R.id.tv_email);
-        mtv_dep = findViewById(R.id.tv_department);
-
-
-        mtv_id.setText(SharedPrefManager.getInstance(this).getUserId());
-        mtv_fName.setText(SharedPrefManager.getInstance(this).getUserFName());
-        mtv_lName.setText(SharedPrefManager.getInstance(this).getUserLName());
-        mtv_email.setText(SharedPrefManager.getInstance(this).getUserEmail());
-        mtv_dep.setText(SharedPrefManager.getInstance(this).getUserDepartment());
+        
 
     }
 
