@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                                 );
 
                                         //Get us to TeacherActivity screen
-                                        startActivity(new Intent(getApplicationContext(), TeacherActivity.class));
+                                        startActivity(new Intent(getApplicationContext(), StudentHome.class));
                                         finish();
                                     }else{
                                         Toast.makeText(
