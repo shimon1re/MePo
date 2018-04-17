@@ -2,19 +2,12 @@ package com.example.android.mepo;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Button;
 
-public class StudentHome extends AppCompatActivity {
-    private Button historyBttn;
-    private Button startBttn;
-
-
-
-
+public class student_action extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_home);
+        setContentView(R.layout.activity_student_action);
     }
 }

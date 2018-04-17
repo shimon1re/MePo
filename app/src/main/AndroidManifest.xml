@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".TeacherActivity" />
-        <activity android:name=".StudentHome"></activity>
+        <activity android:name=".StudentHome" />
+        <activity android:name=".student_action"></activity>
     </application>
 
 </manifest>
