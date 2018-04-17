@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mBt_login.setOnClickListener(this);
     }
 
-    private void userLogin(){
+    private void studentLogin(){
         final String user_id = mEt_userId.getText().toString().trim();
         final String user_password = mEt_userPassword.getText().toString().trim();
 
@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         //A LOGIN function is called so that the parameters passed
                                         // are the values of the JSON string
                                         SharedPrefManager.getInstance(getApplicationContext())
-                                                .userLogin(
+                                                .studentLogin(
                                                         jsonObject.getString("s_id"),
                                                         jsonObject.getString("s_firstName"),
                                                         jsonObject.getString("s_lastName"),
@@ -126,15 +126,88 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
 
+
+    private void teacherLogin(){
+        final String user_id = mEt_userId.getText().toString().trim();
+        final String user_password = mEt_userPassword.getText().toString().trim();
+
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        StringRequest stringRequest = new StringRequest
+                (Request.Method.POST, Constants.URL_LOGIN,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                try{
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    //If there is no error message in the JSON string
+                                    if(!jsonObject.getBoolean("error")){
+                                        //A LOGIN function is called so that the parameters passed
+                                        // are the values of the JSON string
+                                        SharedPrefManager.getInstance(getApplicationContext())
+                                                .teacherLogin(
+                                                        jsonObject.getString("t_id"),
+                                                        jsonObject.getString("t_firstName"),
+                                                        jsonObject.getString("t_lastName"),
+                                                        jsonObject.getString("t_email")
+                                                );
+
+                                        //Get us to TeacherActivity screen
+                                        startActivity(new Intent(getApplicationContext(), TeacherActivity.class));
+                                        finish();
+                                    }else{
+                                        Toast.makeText(
+                                                getApplicationContext(),
+                                                jsonObject.getString("message"),
+                                                Toast.LENGTH_LONG
+                                        ).show();
+                                    }
+
+                                } catch (JSONException e){
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                Toast.makeText(
+                                        getApplicationContext(),
+                                        error.getMessage(),
+                                        Toast.LENGTH_LONG
+                                ).show();
+                            }
+                        }){
+
+            //Push parameters to Request.Method.POST
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("t_id",user_id);
+                params.put("t_password",user_password);
+                return params;
+            }
+        };
+
+        //Making a connection by singleton class to the database with stringRequest
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+    }
+
+
+
+
+
     @Override
     public void onClick(View view) {
         if (view == mBt_login) {
             if(mSw_teacher.isChecked()) {
-
+                teacherLogin();
             }
             else {
-                userLogin();
-
+                studentLogin();
             }
         }
     }
