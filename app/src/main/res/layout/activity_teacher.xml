@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias="0.419" />
 
     <Button
-        android:id="@+id/historyButt"
+        android:id="@+id/historyBttn"
         android:layout_width="214dp"
         android:layout_height="wrap_content"
         android:text="History"
