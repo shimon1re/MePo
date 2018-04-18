@@ -30,16 +30,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Switch mSw_teacher;
     private ProgressBar mProgressBar;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //if user already logged in then pass him to TeacherActivity
+        //if user already logged in then pass him to his activity
         if(SharedPrefManager.getInstance(this).isLoggedIn()){
-            finish();
-            startActivity(new Intent(this, TeacherActivity.class));
-            return;
+            if(SharedPrefManager.getInstance(this).getUserDepartment() == null) {
+                finish();
+                startActivity(new Intent(this, TeacherActivity.class));
+                return;
+            }
+            else {
+                finish();
+                startActivity(new Intent(this, StudentActivity.class));
+                return;
+            }
+
         }
 
         mEt_userId = findViewById(R.id.et_userId);
@@ -80,8 +90,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                                         jsonObject.getString("s_department")
                                                 );
 
-                                        //Get us to TeacherActivity screen
-                                        startActivity(new Intent(getApplicationContext(), StudentHome.class));
+                                        //Get us to StudentActivity screen
+                                        startActivity(new Intent(getApplicationContext(), StudentActivity.class));
                                         finish();
                                     }else{
                                         Toast.makeText(
