@@ -3,7 +3,7 @@ package com.example.android.mepo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class student_action extends AppCompatActivity {
+public class StudentAction extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
