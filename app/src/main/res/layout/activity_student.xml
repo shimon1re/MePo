@@ -10,7 +10,7 @@
         android:id="@+id/historyButt"
         android:layout_width="181dp"
         android:layout_height="wrap_content"
-        android:text="HISTORY"
+        android:text="MY HISTORY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -38,14 +38,13 @@
         android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.546"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.175" />
+        app:layout_constraintVertical_bias="0.179" />
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="147dp"
+        android:layout_width="130dp"
         android:layout_height="29dp"
         android:text="Please select :"
         android:textSize="18sp"
