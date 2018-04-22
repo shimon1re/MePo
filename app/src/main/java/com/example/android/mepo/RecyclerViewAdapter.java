@@ -23,7 +23,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private int mNumberItems;
 
-    /**
+    /*
      * The interface that receives onClick messages.
      */
     public interface ListItemClickListener {
@@ -40,12 +40,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public NumberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        int layoutIdForListItem = R.layout.number_list_item;
+        int layoutIdForListItem = R.layout.course_list_item;
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
         View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
         NumberViewHolder viewHolder = new NumberViewHolder(view);
+
+
+        viewHolderCount++;
+        Log.d(TAG, "onCreateViewHolder: number of ViewHolders created: "
+                + viewHolderCount);
 
         return viewHolder;
     }
@@ -82,13 +87,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             itemView.setOnClickListener(this);
         }
 
-        /**
-         * A method we wrote for convenience. This method will take an integer as input and
-         * use that integer to display the appropriate text within a list item.
+        /*
          * @param listIndex Position of the item in the list
          */
         void bind(int listIndex) {
-            listItemNumberView.setText(String.valueOf(listIndex));
+            listItemNumberView.setText("Course name: " + String.valueOf(listIndex));
         }
 
         @Override
