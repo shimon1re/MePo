@@ -5,12 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class StudentActivity extends AppCompatActivity {
 
     private TextView  mtv_fName;
-
+    private Button historyButt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +26,16 @@ public class StudentActivity extends AppCompatActivity {
         }
 
         mtv_fName = findViewById(R.id.nameTextView);
-
-
-
         mtv_fName.setText(SharedPrefManager.getInstance(this).getUserFName());
-
+        historyButt = findViewById(R.id.historyButt);
+        historyButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                    startActivity(new Intent(getApplicationContext(), StudentHistory.class));
+            }
+        });
     }
 
     //Responsible for the logout button
@@ -50,4 +57,9 @@ public class StudentActivity extends AppCompatActivity {
         }
         return true;
     }
+
+
+
+
+
 }
