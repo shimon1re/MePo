@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mProgressBar.setVisibility(View.VISIBLE);
 
         StringRequest stringRequest = new StringRequest
-                (Request.Method.POST, Constants.URL_LOGIN,
+                (Request.Method.POST, Constants.URL_S_LOGIN,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
@@ -146,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mProgressBar.setVisibility(View.VISIBLE);
 
         StringRequest stringRequest = new StringRequest
-                (Request.Method.POST, Constants.URL_LOGIN,
+                (Request.Method.POST, Constants.URL_T_LOGIN,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
