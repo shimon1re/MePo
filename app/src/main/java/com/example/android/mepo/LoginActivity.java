@@ -41,12 +41,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(SharedPrefManager.getInstance(this).isLoggedIn()){
             if(SharedPrefManager.getInstance(this).getUserDepartment() == null) {
                 finish();
-                startActivity(new Intent(this, TeacherActivity.class));
+                startActivity(new Intent(this, StudentActivity.class));
                 return;
             }
             else {
                 finish();
-                startActivity(new Intent(this, StudentActivity.class));
+                startActivity(new Intent(this, TeacherActivity.class));
                 return;
             }
 
@@ -62,6 +62,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mBt_login.setOnClickListener(this);
     }
 
+
+
     private void studentLogin(){
         final String user_id = mEt_userId.getText().toString().trim();
         final String user_password = mEt_userPassword.getText().toString().trim();
@@ -69,7 +71,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mProgressBar.setVisibility(View.VISIBLE);
 
         StringRequest stringRequest = new StringRequest
-                (Request.Method.POST, Constants.URL_LOGIN,
+                (Request.Method.POST, Constants.URL_S_LOGIN,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
@@ -90,7 +92,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                                         jsonObject.getString("s_department")
                                                 );
 
-                                        //Get us to StudentActivity screen
+                                        //Get us to TeacherActivity screen
                                         startActivity(new Intent(getApplicationContext(), StudentActivity.class));
                                         finish();
                                     }else{
@@ -144,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mProgressBar.setVisibility(View.VISIBLE);
 
         StringRequest stringRequest = new StringRequest
-                (Request.Method.POST, Constants.URL_LOGIN,
+                (Request.Method.POST, Constants.URL_T_LOGIN,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
@@ -164,7 +166,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                                         jsonObject.getString("t_email")
                                                 );
 
-                                        //Get us to TeacherActivity screen
+                                        //Get us to StudentActivity screen
                                         startActivity(new Intent(getApplicationContext(), TeacherActivity.class));
                                         finish();
                                     }else{
@@ -205,7 +207,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //Making a connection by singleton class to the database with stringRequest
         RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
     }
-
 
 
 
