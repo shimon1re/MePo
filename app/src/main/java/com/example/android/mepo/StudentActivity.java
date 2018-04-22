@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 public class StudentActivity extends AppCompatActivity {
 
-    private TextView mtv_id, mtv_fName, mtv_lName, mtv_email, mtv_dep;
+    private TextView  mtv_fName;
 
 
     @Override
@@ -23,18 +23,11 @@ public class StudentActivity extends AppCompatActivity {
             startActivity(new Intent(this, LoginActivity.class));
         }
 
-        mtv_id = findViewById(R.id.tv_id);
-        mtv_fName = findViewById(R.id.tv_firstName);
-        mtv_lName = findViewById(R.id.tv_lastName);
-        mtv_email = findViewById(R.id.tv_email);
-        mtv_dep = findViewById(R.id.tv_department);
+        mtv_fName = findViewById(R.id.nameTextView);
 
 
-        mtv_id.setText(SharedPrefManager.getInstance(this).getUserId());
+
         mtv_fName.setText(SharedPrefManager.getInstance(this).getUserFName());
-        mtv_lName.setText(SharedPrefManager.getInstance(this).getUserLName());
-        mtv_email.setText(SharedPrefManager.getInstance(this).getUserEmail());
-        mtv_dep.setText(SharedPrefManager.getInstance(this).getUserDepartment());
 
     }
 
