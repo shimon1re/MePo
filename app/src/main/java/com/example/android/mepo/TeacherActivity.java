@@ -29,8 +29,8 @@ import java.util.Map;
 public class TeacherActivity extends AppCompatActivity
         implements RecyclerViewAdapter.ListItemClickListener{
 
-    //Need to be replaced with the number of courses of each student
-    public int NUM_LIST_ITEMS ;
+
+    public int TEACHER_NUM_LIST_ITEMS ;
 
     //References to RecyclerView and Adapter
     private RecyclerViewAdapter mAdapter;
@@ -49,13 +49,13 @@ public class TeacherActivity extends AppCompatActivity
 
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
-        NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_TEACHER_COURSES_SIZE",0);
+        TEACHER_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_TEACHER_COURSES_SIZE",0);
 
         list_of_courses_names = getIntent().getStringArrayListExtra("EXTRA_TEACHER_COURSES_NAME");
         System.out.println(list_of_courses_names);
 
 
-        mNumbersListRecycler = findViewById(R.id.rv_studentCourses);
+        mNumbersListRecycler = findViewById(R.id.rv_teacherCourses);
         /*
          * A LinearLayoutManager is responsible for measuring and positioning item views within a
          * RecyclerView into a linear list. This means that it can produce either a horizontal or
@@ -66,10 +66,8 @@ public class TeacherActivity extends AppCompatActivity
         mNumbersListRecycler.setLayoutManager(layoutManager);
         mNumbersListRecycler.setHasFixedSize(true);
         //Initializing the RecyclerViewAdapter class
-        mAdapter = new RecyclerViewAdapter(NUM_LIST_ITEMS, this);
+        mAdapter = new RecyclerViewAdapter(TEACHER_NUM_LIST_ITEMS, this);
         mNumbersListRecycler.setAdapter(mAdapter);
-
-        //teacherCoursesList();
 
 
         //check if user logged in or not.
@@ -80,113 +78,35 @@ public class TeacherActivity extends AppCompatActivity
     }
 
 
-    private void teacherCoursesList(){
-
-        mProgressBar.setVisibility(View.VISIBLE);
-
-        StringRequest stringRequest = new StringRequest
-                (Request.Method.POST, Constants.URL_T_LOGIN,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-
-                                mProgressBar.setVisibility(View.INVISIBLE);
-                                try{
-                                    JSONObject jsonObject = new JSONObject(response);
-                                    //If there is no error message in the JSON string
-                                    if(!jsonObject.getBoolean("error")){
-
-                                        JSONArray courses_arr;
-                                        courses_arr = jsonObject.getJSONArray("c_names");
-                                        NUM_LIST_ITEMS = courses_arr.length();
-
-                                        ArrayList<String> list_of_courses = new ArrayList<String>();
-                                        if (courses_arr != null) {
-                                            System.out.println("courses_arr not null!!!!!!!!!!!!");
-                                            System.out.println(courses_arr.length());
-                                            for (int i = 0; i < courses_arr.length(); i++) {
-                                                list_of_courses.add(courses_arr.getString(i));
-                                                //System.out.println(list_of_courses.get(i));
-                                            }
-                                        }else{
-                                            System.out.println("courses_arr = null!!!!!!!!!!!!");
-                                        }
-
-                                        System.out.println(list_of_courses);
-
-                                        //Get us to TeacherActivity screen
-                                        /*Intent intent = new Intent(getBaseContext(), TeacherActivity.class);
-                                        intent.putExtra("EXTRA_TEACHER_COURSES_SIZE", list_of_courses.size());
-                                        intent.putExtra("EXTRA_TEACHER_COURSES_NAME", list_of_courses);
-                                        for (int i = 0; i < list_of_courses.size(); i++) {
-                                            intent.putExtra("EXTRA_TEACHER_COURSES_NAME:"+i, list_of_courses.get(i));
-                                        }
-                                        //intent.putExtra("EXTRA_TEACHER_COURSES_NAMES", "");
-                                        startActivity(intent);
-                                        //startActivity(new Intent(getApplicationContext(), TeacherActivity.class));
-                                        finish();*/
-
-                                        /*LinearLayoutManager layoutManager = new LinearLayoutManager(TeacherActivity.this);
-                                        mNumbersListRecycler.setLayoutManager(layoutManager);
-                                        mNumbersListRecycler.setHasFixedSize(true);
-                                        //Initializing the RecyclerViewAdapter class
-                                        mAdapter = new RecyclerViewAdapter(NUM_LIST_ITEMS, TeacherActivity.this);
-                                        mNumbersListRecycler.setAdapter(mAdapter);*/
-
-
-                                    }else{
-                                        Toast.makeText(
-                                                getApplicationContext(),
-                                                jsonObject.getString("message"),
-                                                Toast.LENGTH_LONG
-                                        ).show();
-                                    }
-
-                                } catch (JSONException e){
-                                    e.printStackTrace();
-                                }
-                            }
-                        },
-
-
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                mProgressBar.setVisibility(View.INVISIBLE);
-                                Toast.makeText(
-                                        getApplicationContext(),
-                                        error.getMessage(),
-                                        Toast.LENGTH_LONG
-                                ).show();
-                            }
-                        }){
-
-
-
-            //Push parameters to Request.Method.POST
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("t_id",SharedPrefManager.getInstance(getApplicationContext()).getUserId());
-                return params;
-            }
-        };
-
-
-
-        //Making a connection by singleton class to the database with stringRequest
-        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
-
-
-    }
 
 
 
 
 
-    public static ArrayList<String> getList_of_courses_names(){
+    public static ArrayList<String> getList_of_teacher_courses_names(){
         return list_of_courses_names;
     }
+
+
+
+
+
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
+
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        //Here we have to load the list of lectures that belong to the specific course,
+        //and open them in a new screen.
+        String toastMessage = list_of_courses_names.get(clickedItemIndex).toString()
+                .replaceAll("[\\[\"\\],-]","") + " clicked.";
+        mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+
+        mToast.show();
+    }
+
 
 
 
@@ -197,6 +117,8 @@ public class TeacherActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
+
+
 
 
 
@@ -219,36 +141,7 @@ public class TeacherActivity extends AppCompatActivity
 
 
 
-    @Override
-    public void onListItemClick(int clickedItemIndex) {
 
-        if (mToast != null) {
-            mToast.cancel();
-        }
-        /*
-         * Create a Toast and store it in our Toast field.
-         * The Toast that shows up will have a message.
-         */
-        String toastMessage = "Item #" + clickedItemIndex + " clicked.";
-        mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
-
-        mToast.show();
-    }
-
-
-
-
-    /*@Override
-    public void onClick(View view) {
-        if (view == startBttn) {
-            startActivity(new Intent(getApplicationContext(), StudentAction.class));
-            finish();
-            }
-            else {
-
-            }
-        }
-    }*/
 
 
 

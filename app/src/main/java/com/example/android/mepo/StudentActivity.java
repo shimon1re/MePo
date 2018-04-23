@@ -3,40 +3,113 @@ package com.example.android.mepo;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
-public class StudentActivity extends AppCompatActivity {
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 
-    private TextView  mtv_fName;
-    private Button historyButt;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+
+public class StudentActivity extends AppCompatActivity
+        implements RecyclerViewAdapter.ListItemClickListener{
+
+
+    public int STUDENT_NUM_LIST_ITEMS ;
+
+    //References to RecyclerView and Adapter
+    private RecyclerViewAdapter mAdapter;
+    private RecyclerView mNumbersListRecycler;
+    private ProgressBar mProgressBar;
+    private Toast mToast;
+    public static ArrayList<String> list_of_courses_names = new ArrayList<String>();;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
 
+        mProgressBar = findViewById(R.id.pb_loading_indicator);
+
+        STUDENT_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_STUDENT_COURSES_SIZE",0);
+
+        list_of_courses_names = getIntent().getStringArrayListExtra("EXTRA_STUDENT_COURSES_NAME");
+        System.out.println(list_of_courses_names);
+
+
+        mNumbersListRecycler = findViewById(R.id.rv_studentCourses);
+        /*
+         * A LinearLayoutManager is responsible for measuring and positioning item views within a
+         * RecyclerView into a linear list. This means that it can produce either a horizontal or
+         * vertical list depending on which parameter you pass in to the LinearLayoutManager
+         * constructor. By default, if you don't specify an orientation, you get a vertical list.
+         */
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mNumbersListRecycler.setLayoutManager(layoutManager);
+        mNumbersListRecycler.setHasFixedSize(true);
+        //Initializing the RecyclerViewAdapter class
+        mAdapter = new RecyclerViewAdapter(STUDENT_NUM_LIST_ITEMS, this);
+        mNumbersListRecycler.setAdapter(mAdapter);
+
+
         //check if user logged in or not.
         if(!SharedPrefManager.getInstance(this).isLoggedIn()){
             finish();
             startActivity(new Intent(this, LoginActivity.class));
         }
-
-        mtv_fName = findViewById(R.id.nameTextView);
-        mtv_fName.setText(SharedPrefManager.getInstance(this).getUserFName());
-        historyButt = findViewById(R.id.historyButt);
-        historyButt.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                    startActivity(new Intent(getApplicationContext(), StudentHistory.class));
-            }
-        });
     }
+
+
+
+
+
+
+
+    public static ArrayList<String> getList_of_student_courses_names(){
+        return list_of_courses_names;
+    }
+
+
+
+
+
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
+
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        //Here we have to load the list of lectures that belong to the specific course,
+        //and open them in a new screen.
+        String toastMessage = list_of_courses_names.get(clickedItemIndex).toString()
+                .replaceAll("[\\[\"\\],-]","") + " clicked.";
+        mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+
+        mToast.show();
+    }
+
+
+
+
 
     //Responsible for the logout button
     @Override
@@ -44,6 +117,11 @@ public class StudentActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
+
+
+
+
+
 
     //Responsible for the menu buttons, what each button does
     @Override
@@ -57,6 +135,11 @@ public class StudentActivity extends AppCompatActivity {
         }
         return true;
     }
+
+
+
+
+
 
 
 

@@ -1,5 +1,6 @@
 package com.example.android.mepo;
 
+
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +12,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import static com.example.android.mepo.TeacherActivity.getList_of_courses_names;
+import static com.example.android.mepo.LoginActivity.IsStudent;
+import static com.example.android.mepo.StudentActivity.getList_of_student_courses_names;
+import static com.example.android.mepo.TeacherActivity.getList_of_teacher_courses_names;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.NumberViewHolder>{
 
@@ -109,9 +112,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
          * @param listIndex Position of the item in the list
          */
         void bind(int listIndex) {
-            ArrayList<String> list_of_courses_names = getList_of_courses_names();
-            listItemNumberView.setText("Course: " + list_of_courses_names.get(listIndex).toString()
-                    .replaceAll("[\\[\"\\],-]",""));
+
+            if(IsStudent == null) {
+                System.out.println("IsStudent == null");
+                ArrayList<String> list_of_courses_names = getList_of_teacher_courses_names();
+                listItemNumberView.setText("Course: " + list_of_courses_names.get(listIndex).toString()
+                        .replaceAll("[\\[\"\\],-]", ""));
+            }
+            else{
+                System.out.println("IsStudent != null");
+                ArrayList<String> list_of_courses_names = getList_of_student_courses_names();
+                listItemNumberView.setText("Course: " + list_of_courses_names.get(listIndex).toString()
+                        .replaceAll("[\\[\"\\],-]", ""));
+            }
 
         }
 
