@@ -91,7 +91,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                                         jsonObject.getString("s_email"),
                                                         jsonObject.getString("s_department")
                                                 );
-
                                         //Get us to TeacherActivity screen
                                         startActivity(new Intent(getApplicationContext(), StudentActivity.class));
                                         finish();
@@ -134,11 +133,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
     }
 
-
-
-
-
-
     private void teacherLogin(){
         final String user_id = mEt_userId.getText().toString().trim();
         final String user_password = mEt_userPassword.getText().toString().trim();
@@ -164,6 +158,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                                         jsonObject.getString("t_firstName"),
                                                         jsonObject.getString("t_lastName"),
                                                         jsonObject.getString("t_email")
+
                                                 );
 
                                         //Get us to StudentActivity screen
