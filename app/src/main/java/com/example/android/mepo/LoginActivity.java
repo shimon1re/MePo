@@ -52,8 +52,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             if(SharedPrefManager.getInstance(this).getUserDepartment() == null) {
                 finish();
+
                 teacherCoursesList();
-                //startActivity(new Intent(this, TeacherActivity.class));
+                //startActivity(new Intent(this, TeacherActivity.class));              
                 return;
             }
             else {
