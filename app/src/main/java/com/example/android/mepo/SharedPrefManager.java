@@ -7,6 +7,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +22,7 @@ public class SharedPrefManager {
 
     private static final String SHARED_PREF_NAME = "mysharedpref12";
     private static final String KEY_USER_ID = "userid";
+    private static final String KEY_USER_PASSWORD = "userpassword";
     private static final String KEY_USER_FIRSTNAME = "userfirstname";
     private static final String KEY_USER_LASTNAME = "userlastname";
     private static final String KEY_USER_EMAIL = "useremail";
@@ -37,12 +40,13 @@ public class SharedPrefManager {
         return mInstance;
     }
 
-    public boolean studentLogin(String id, String firstName, String lastName, String email, String department){
+    public boolean studentLogin(String id,String password, String firstName, String lastName, String email, String department){
 
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString(KEY_USER_ID, id);
+        editor.putString(KEY_USER_PASSWORD, password);
         editor.putString(KEY_USER_FIRSTNAME, firstName);
         editor.putString(KEY_USER_LASTNAME, lastName);
         editor.putString(KEY_USER_EMAIL, email);
@@ -53,12 +57,15 @@ public class SharedPrefManager {
         return true;
     }
 
-    public boolean teacherLogin(String id, String firstName, String lastName, String email){
+    public boolean teacherLogin(String id,String password, String firstName, String lastName, String email/*, JSONArray courses_arr*/){
 
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
+
+
         editor.putString(KEY_USER_ID, id);
+        editor.putString(KEY_USER_PASSWORD, password);
         editor.putString(KEY_USER_FIRSTNAME, firstName);
         editor.putString(KEY_USER_LASTNAME, lastName);
         editor.putString(KEY_USER_EMAIL, email);
@@ -87,6 +94,11 @@ public class SharedPrefManager {
     public String getUserId(){
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_USER_ID, null);
+    }
+
+    public String getUserPassword(){
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(KEY_USER_PASSWORD, null);
     }
 
     public String getUserFName() {
