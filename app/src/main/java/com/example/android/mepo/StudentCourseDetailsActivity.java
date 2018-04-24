@@ -29,22 +29,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.android.mepo.StudentCourseActivity.IsCourse;
 
-
-public class StudentActivity extends AppCompatActivity
+public class StudentCourseDetailsActivity extends AppCompatActivity
         implements RecyclerViewAdapter.ListItemClickListener{
 
 
-    public int STUDENT_NUM_LIST_ITEMS ;
+    public int COURSE_NUM_LIST_ITEMS ;
 
     //References to RecyclerView and Adapter
     private RecyclerViewAdapter mAdapter;
     private RecyclerView mNumbersListRecycler;
     private ProgressBar mProgressBar;
     private Toast mToast;
-    private TextView mTvUserWelcome;
-    public static ArrayList<String> list_of_courses_names = new ArrayList<String>();;
+    //private TextView mTvUserWelcome;
+    public static ArrayList<String> list_of_lectures = new ArrayList<String>();;
 
 
 
@@ -52,7 +50,7 @@ public class StudentActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student);
+        setContentView(R.layout.activity_student_course_details);
 
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
@@ -61,25 +59,23 @@ public class StudentActivity extends AppCompatActivity
         String formattedDate = df.format(c);*/
 
 
-        mTvUserWelcome = findViewById(R.id.tv_hello_user);
-        mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
+        //mTvUserWelcome = findViewById(R.id.tv_hello_user);
+        //mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
 
 
-        STUDENT_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_STUDENT_COURSES_SIZE",0);
+        COURSE_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_COURSE_LECTURES_SIZE",0);
 
-        list_of_courses_names = getIntent().getStringArrayListExtra("EXTRA_STUDENT_COURSES_NAME");
-        System.out.println(list_of_courses_names);
+        list_of_lectures = getIntent().getStringArrayListExtra("EXTRA_COURSE_LECTURES");
+        System.out.println(list_of_lectures);
 
 
-        mNumbersListRecycler = findViewById(R.id.rv_studentCourses);
-
-        IsCourse = null;
+        mNumbersListRecycler = findViewById(R.id.rv_courseLectures);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mNumbersListRecycler.setLayoutManager(layoutManager);
         mNumbersListRecycler.setHasFixedSize(true);
         //Initializing the RecyclerViewAdapter class
-        mAdapter = new RecyclerViewAdapter(STUDENT_NUM_LIST_ITEMS, this);
+        mAdapter = new RecyclerViewAdapter(COURSE_NUM_LIST_ITEMS, this);
         mNumbersListRecycler.setAdapter(mAdapter);
 
 
@@ -96,8 +92,8 @@ public class StudentActivity extends AppCompatActivity
 
 
 
-    public static ArrayList<String> getList_of_student_courses_names(){
-        return list_of_courses_names;
+    public static ArrayList<String> getListOfStudentCourseLectures(){
+        return list_of_lectures;
     }
 
 
@@ -116,18 +112,11 @@ public class StudentActivity extends AppCompatActivity
         //String toastMessage = list_of_courses_names.get(clickedItemIndex).toString().replaceAll("[\\[\"\\],-]","") + " clicked.";
         //mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
 
-
-        Intent intent = new Intent(getApplicationContext(), StudentCourseActivity.class);
-        intent.putExtra("EXTRA_STUDENT_COURSE_NAME_ID", list_of_courses_names.get(clickedItemIndex).toString());
-
-        startActivity(intent);
-        //finish();
-
-
-        //startActivity(new Intent(this, StudentCourseActivity.class));
-
         //mToast.show();
     }
+
+
+
 
 
 
@@ -139,8 +128,6 @@ public class StudentActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
-
-
 
 
 
@@ -157,10 +144,6 @@ public class StudentActivity extends AppCompatActivity
         }
         return true;
     }
-
-
-
-
 
 
 

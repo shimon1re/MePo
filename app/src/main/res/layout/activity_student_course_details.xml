@@ -5,22 +5,26 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_studentCourses"
+        android:id="@+id/rv_courseLectures"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="80dp"
         android:padding="16dp" />
+
 
     <ProgressBar
         android:id="@+id/pb_loading_indicator"
         android:layout_width="42dp"
         android:layout_height="42dp"
         android:layout_gravity="center"
-        android:visibility="invisible" />
+        android:padding="80dp"
+        android:visibility="invisible"
+        />
 
 
     <TextView
         android:id="@+id/tv_hello_user"
+        android:text="Your previous lectures:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="16dp"

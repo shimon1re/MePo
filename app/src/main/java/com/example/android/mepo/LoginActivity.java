@@ -55,6 +55,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             //if(SharedPrefManager.getInstance(this).getUserDepartment() == null) {
             if(SharedPrefManager.getInstance(this).getUserIsStudent() == null) {
+                IsStudent = null;
                 finish();
                 //teacherLogin();
                 teacherCoursesList();
@@ -137,19 +138,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         }
 
                                         //Get us to StudentActivity screen
-                                        Intent intent = new Intent(getBaseContext(), StudentActivity.class);
+                                        //Intent intent = new Intent(getBaseContext(), StudentActivity.class);
+                                        Intent intent = new Intent(getApplicationContext(), StudentActivity.class);
                                         intent.putExtra("EXTRA_STUDENT_COURSES_SIZE", list_of_courses.size());
                                         intent.putExtra("EXTRA_STUDENT_COURSES_NAME", list_of_courses);
-                                        for (int i = 0; i < list_of_courses.size(); i++) {
+                                        /*for (int i = 0; i < list_of_courses.size(); i++) {
                                             intent.putExtra("EXTRA_STUDENT_COURSES_NAME:"+i, list_of_courses.get(i));
-                                        }
+                                        }*/
+
 
                                         startActivity(intent);
                                         //startActivity(new Intent(getApplicationContext(), TeacherActivity.class));
                                         finish();
 
 
-                                        //startActivity(new Intent(getApplicationContext(), StudentCourseActivity.class));
 
                                     }else{
                                         Toast.makeText(
@@ -197,7 +199,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     public void studentCoursesList(){
 
-        mProgressBar.setVisibility(View.VISIBLE);
+        //mProgressBar.setVisibility(View.VISIBLE);
 
         StringRequest stringRequest = new StringRequest
                 (Request.Method.POST, Constants.URL_S_LOGIN,
@@ -230,16 +232,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         System.out.println(list_of_courses);
 
                                         //Get us to TeacherActivity screen
-                                        Intent intent = new Intent(getBaseContext(), StudentActivity.class);
+                                        //Intent intent = new Intent(getBaseContext(), StudentActivity.class);
+                                        Intent intent = new Intent(getApplicationContext(), StudentActivity.class);
                                         intent.putExtra("EXTRA_STUDENT_COURSES_SIZE", list_of_courses.size());
                                         intent.putExtra("EXTRA_STUDENT_COURSES_NAME", list_of_courses);
-                                        for (int i = 0; i < list_of_courses.size(); i++) {
+                                        /*for (int i = 0; i < list_of_courses.size(); i++) {
                                             intent.putExtra("EXTRA_STUDENT_COURSES_NAME:"+i, list_of_courses.get(i));
-                                        }
+                                        }*/
+
 
                                         startActivity(intent);
                                         //startActivity(new Intent(getApplicationContext(), TeacherActivity.class));
-                                        //finish();
+                                        finish();
 
 
 
@@ -299,7 +303,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         final String user_id = mEt_userId.getText().toString().trim();
         final String user_password = mEt_userPassword.getText().toString().trim();
-        IsStudent = null;
 
 
         mProgressBar.setVisibility(View.VISIBLE);
@@ -341,12 +344,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         }
 
                                         //Get us to TeacherActivity screen
-                                        Intent intent = new Intent(getBaseContext(), TeacherActivity.class);
+                                        //Intent intent = new Intent(getBaseContext(), TeacherActivity.class);
+                                        Intent intent = new Intent(getApplicationContext(), TeacherActivity.class);
                                         intent.putExtra("EXTRA_TEACHER_COURSES_SIZE", list_of_courses.size());
                                         intent.putExtra("EXTRA_TEACHER_COURSES_NAME", list_of_courses);
-                                        for (int i = 0; i < list_of_courses.size(); i++) {
+                                        /*for (int i = 0; i < list_of_courses.size(); i++) {
                                             intent.putExtra("EXTRA_TEACHER_COURSES_NAME:"+i, list_of_courses.get(i));
-                                        }
+                                        }*/
 
                                         startActivity(intent);
                                         //startActivity(new Intent(getApplicationContext(), TeacherActivity.class));
@@ -401,7 +405,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void teacherCoursesList(){
 
         mProgressBar.setVisibility(View.VISIBLE);
-        IsStudent = null;
 
         StringRequest stringRequest = new StringRequest
                 (Request.Method.POST, Constants.URL_T_LOGIN,
@@ -434,16 +437,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         System.out.println(list_of_courses);
 
                                         //Get us to TeacherActivity screen
-                                        Intent intent = new Intent(getBaseContext(), TeacherActivity.class);
+                                        //Intent intent = new Intent(getBaseContext(), TeacherActivity.class);
+                                        Intent intent = new Intent(getApplicationContext(), TeacherActivity.class);
                                         intent.putExtra("EXTRA_TEACHER_COURSES_SIZE", list_of_courses.size());
                                         intent.putExtra("EXTRA_TEACHER_COURSES_NAME", list_of_courses);
-                                        for (int i = 0; i < list_of_courses.size(); i++) {
+                                        /*for (int i = 0; i < list_of_courses.size(); i++) {
                                             intent.putExtra("EXTRA_TEACHER_COURSES_NAME:"+i, list_of_courses.get(i));
-                                        }
+                                        }*/
 
                                         startActivity(intent);
                                         //startActivity(new Intent(getApplicationContext(), TeacherActivity.class));
-                                        //finish();
+                                        finish();
 
 
 
@@ -500,6 +504,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         if (view == mBt_login) {
             if(mSw_teacher.isChecked()) {
+                IsStudent = null;
                 teacherLogin();
             }
             else {

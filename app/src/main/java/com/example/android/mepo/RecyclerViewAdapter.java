@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 import static com.example.android.mepo.LoginActivity.IsStudent;
 import static com.example.android.mepo.StudentActivity.getList_of_student_courses_names;
+import static com.example.android.mepo.StudentCourseActivity.IsCourse;
+import static com.example.android.mepo.StudentCourseDetailsActivity.getListOfStudentCourseLectures;
 import static com.example.android.mepo.TeacherActivity.getList_of_teacher_courses_names;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.NumberViewHolder>{
@@ -53,7 +55,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public NumberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        int layoutIdForListItem = R.layout.course_list_item;
+        int layoutIdForListItem = R.layout.recycler_list_item;
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
@@ -87,7 +89,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     class NumberViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         // Will display the position in the list, ie 0 through getItemCount() - 1
-        TextView listItemNumberView;
+        TextView teacherListItemNumberView,studentListItemNumberView,studentCourseListItemNumberView;
+
 
 
         /**
@@ -99,8 +102,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
          */
         public NumberViewHolder(View itemView) {
             super(itemView);
+            if(IsStudent == null){
+                teacherListItemNumberView = itemView.findViewById(R.id.tv_teacher_activity_item_number);
+            }
+            else{
+                if(IsCourse == null){
+                    studentListItemNumberView = itemView.findViewById(R.id.tv_student_activity_item_number);
+                }
+                else{
+                    studentCourseListItemNumberView = itemView.findViewById(R.id.tv_student_course_item_number);
+                }
 
-            listItemNumberView = itemView.findViewById(R.id.tv_item_number);
+            }
+            //listItemNumberView = itemView.findViewById(R.id.tv_item_number);
             //viewHolderIndex = itemView.findViewById(R.id.tv_view_holder_instance);
             itemView.setOnClickListener(this);
 
@@ -114,16 +128,33 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         void bind(int listIndex) {
 
             if(IsStudent == null) {
-                System.out.println("IsStudent == null");
+                String clean;
                 ArrayList<String> list_of_courses_names = getList_of_teacher_courses_names();
-                listItemNumberView.setText("Course: " + list_of_courses_names.get(listIndex).toString()
-                        .replaceAll("[\\[\"\\],-]", ""));
+                clean = list_of_courses_names.get(listIndex).toString();
+                clean = clean.replaceAll("[0-9]","");
+                clean = clean.replaceAll("[\\[\"\\],-]", "");
+                teacherListItemNumberView.setText("Course: " + clean);
+
             }
             else{
-                System.out.println("IsStudent != null");
-                ArrayList<String> list_of_courses_names = getList_of_student_courses_names();
-                listItemNumberView.setText("Course: " + list_of_courses_names.get(listIndex).toString()
-                        .replaceAll("[\\[\"\\],-]", ""));
+                if(IsCourse == null){
+                    String clean;
+                    ArrayList<String> list_of_courses_names = getList_of_student_courses_names();
+                    clean = list_of_courses_names.get(listIndex).toString();
+                    clean = clean.replaceAll("[0-9]","");
+                    clean = clean.replaceAll("[\\[\"\\],-]", "");
+                    studentListItemNumberView.setText("Course: " + clean);
+                }
+                else {
+                    String clean,l_date,l_num,l_status;
+                    ArrayList<String> list_of_lectures_names = getListOfStudentCourseLectures();
+                    clean = list_of_lectures_names.get(listIndex).toString();
+                    l_date = clean.substring(6,14);
+                    l_num = clean.substring(2,3);
+                    l_status = clean.substring(17,clean.length()-2);
+                    //System.out.println(l_num + " "+l_date + " "+l_status+ " sub!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
+                    studentCourseListItemNumberView.setText("Lecture "+ l_num + ": "+ l_date + " " + l_status);
+                }
             }
 
         }
