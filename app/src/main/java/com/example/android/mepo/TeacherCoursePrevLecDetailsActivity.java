@@ -7,34 +7,17 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 
-public class StudentCourseDetailsActivity extends AppCompatActivity
+public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
         implements RecyclerViewAdapter.ListItemClickListener{
 
 
-    public int COURSE_NUM_LIST_ITEMS ;
+    public int STUDENTS_NUM_LIST_ITEMS ;
 
     //References to RecyclerView and Adapter
     private RecyclerViewAdapter mAdapter;
@@ -42,7 +25,7 @@ public class StudentCourseDetailsActivity extends AppCompatActivity
     private ProgressBar mProgressBar;
     private Toast mToast;
     //private TextView mTvUserWelcome;
-    public static ArrayList<String> list_of_lectures = new ArrayList<String>();;
+    public static ArrayList<String> list_of_students = new ArrayList<String>();;
 
 
 
@@ -50,7 +33,7 @@ public class StudentCourseDetailsActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_course_details);
+        setContentView(R.layout.activity_teacher_course_prev_lec_details);
 
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
@@ -63,19 +46,19 @@ public class StudentCourseDetailsActivity extends AppCompatActivity
         //mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
 
 
-        COURSE_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_COURSE_LECTURES_SIZE",0);
+        STUDENTS_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_LECTURES_DETAILS_SIZE",0);
 
-        list_of_lectures = getIntent().getStringArrayListExtra("EXTRA_COURSE_LECTURES");
-        System.out.println(list_of_lectures);
+        list_of_students = getIntent().getStringArrayListExtra("EXTRA_LECTURES_DETAILS");
+        System.out.println("check2" + list_of_students);
 
 
-        mNumbersListRecycler = findViewById(R.id.rv_courseLectures);
+        mNumbersListRecycler = findViewById(R.id.rv_studentsInLecture);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mNumbersListRecycler.setLayoutManager(layoutManager);
         mNumbersListRecycler.setHasFixedSize(true);
         //Initializing the RecyclerViewAdapter class
-        mAdapter = new RecyclerViewAdapter(COURSE_NUM_LIST_ITEMS, this);
+        mAdapter = new RecyclerViewAdapter(STUDENTS_NUM_LIST_ITEMS, this);
         mNumbersListRecycler.setAdapter(mAdapter);
 
 
@@ -92,8 +75,8 @@ public class StudentCourseDetailsActivity extends AppCompatActivity
 
 
 
-    public static ArrayList<String> getListOfStudentCourseLectures(){
-        return list_of_lectures;
+    public static ArrayList<String> getListOfStudentInLectures(){
+        return list_of_students;
     }
 
 

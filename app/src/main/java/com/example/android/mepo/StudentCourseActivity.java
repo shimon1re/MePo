@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -28,18 +27,18 @@ import java.util.Map;
 public class StudentCourseActivity extends AppCompatActivity implements View.OnClickListener{
 
 
-    private Button mBtn_courseDetails,mBtn_start;
+    private Button mBtn_prev_lectures,mBtn_start;
     private ProgressBar mProgressBar;
     private String COURSE_NAME_ID;
 
-    public static String IsCourse;
+    public static String IsStudentCourseActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.course_activity_student);
+        setContentView(R.layout.activity_student_course);
 
-        IsCourse = null;
+        IsStudentCourseActivity = null;
 
         //check if user logged in or not.
         if(!SharedPrefManager.getInstance(this).isLoggedIn()){
@@ -48,14 +47,13 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
         }
 
         mBtn_start = findViewById(R.id.btn_start);
-        mBtn_courseDetails = findViewById(R.id.btn_courseDetails);
+        mBtn_prev_lectures = findViewById(R.id.btn_previous_lectures);
 
-        mBtn_courseDetails.setOnClickListener(this);
+        mBtn_prev_lectures.setOnClickListener(this);
 
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         COURSE_NAME_ID =  getIntent().getStringExtra("EXTRA_STUDENT_COURSE_NAME_ID");
-
 
     }
 
@@ -69,6 +67,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
     public void courseDetails(){
 
         mProgressBar.setVisibility(View.VISIBLE);
+
 
         StringRequest stringRequest = new StringRequest
                 (Request.Method.POST, Constants.URL_S_ACTIVITY,
@@ -88,11 +87,8 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
 
                                         ArrayList<String> list_of_lectures = new ArrayList<String>();
                                         if (lectures_arr != null) {
-                                            System.out.println("lectures_arr not null!!!!!!!!!!!!");
-                                            System.out.println(lectures_arr.length());
                                             for (int i = 0; i < lectures_arr.length(); i++) {
                                                 list_of_lectures.add(lectures_arr.getString(i));
-                                                //System.out.println(list_of_courses.get(i));
                                             }
                                         }else{
                                             System.out.println("lectures_arr = null!!!!!!!!!!!!");
@@ -102,19 +98,14 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
 
                                         //Get us to TeacherActivity screen
 
-                                        Intent intent = new Intent(getApplicationContext(), StudentCourseDetailsActivity.class);
-                                        //intent.putExtra("EXTRA_STUDENT_COURSE_NAME", COURSE_NAME);
+                                        Intent intent = new Intent(getApplicationContext(), StudentCoursePrevLecActivity.class);
 
                                         intent.putExtra("EXTRA_COURSE_LECTURES_SIZE", list_of_lectures.size());
                                         intent.putExtra("EXTRA_COURSE_LECTURES", list_of_lectures);
 
-                                        //for the recyclerview adapter
-                                        IsCourse = "yes";
+                                        //for the Recyclerview adapter
+                                        IsStudentCourseActivity = "yes";
                                         startActivity(intent);
-                                        //startActivity(new Intent(getApplicationContext(), TeacherActivity.class));
-                                        finish();
-
-
 
                                     }else{
                                         Toast.makeText(
@@ -135,9 +126,11 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
                                 mProgressBar.setVisibility(View.INVISIBLE);
                                 Toast.makeText(
                                         getApplicationContext(),
-                                        error.getMessage(),
+                                        "Connection failed, Please try again",
                                         Toast.LENGTH_LONG
                                 ).show();
+                                finish();
+                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                             }
                         }){
 
@@ -149,14 +142,12 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
                 COURSE_NAME_ID = COURSE_NAME_ID.replaceAll("[\\[\"\\],-]", "");
                 params.put("s_id",SharedPrefManager.getInstance(getApplicationContext()).getUserId());
                 params.put("c_id",COURSE_NAME_ID);
-                //params.put("t_password",SharedPrefManager.getInstance(getApplicationContext()).getUserPassword());
                 return params;
             }
         };
 
         //Making a connection by singleton class to the database with stringRequest
         RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
-
 
     }
 
@@ -202,7 +193,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onClick(View v) {
 
-        if(v == mBtn_courseDetails){
+        if(v == mBtn_prev_lectures){
             courseDetails();
         }
 

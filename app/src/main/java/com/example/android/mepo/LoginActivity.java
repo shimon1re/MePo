@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText mEt_userId,mEt_userPassword;
@@ -35,7 +36,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private String mUser_id;
     private String mUser_password;
-
 
     public static String IsStudent;
 
@@ -78,7 +78,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mBt_login = findViewById(R.id.btn_login);
         mSw_teacher = findViewById(R.id.sw_teacher);
 
-
         mBt_login.setOnClickListener(this);
 
     }
@@ -98,9 +97,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(!SharedPrefManager.getInstance(this).isLoggedIn()) {
             mUser_id = mEt_userId.getText().toString().trim();
             mUser_password = mEt_userPassword.getText().toString().trim();
+
+            mEt_userId.setVisibility(View.INVISIBLE);
+            mEt_userPassword.setVisibility(View.INVISIBLE);
+            mBt_login.setVisibility(View.INVISIBLE);
+            mSw_teacher.setVisibility(View.INVISIBLE);
         }
+
         final String user_id = mUser_id;
         final String user_password = mUser_password;
+
 
         mProgressBar.setVisibility(View.VISIBLE);
 
@@ -118,6 +124,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         //A LOGIN function is called so that the parameters passed
                                         // are the values of the JSON string
                                         if(!SharedPrefManager.getInstance(getApplicationContext()).isLoggedIn()){
+
+                                            mEt_userId.setVisibility(View.INVISIBLE);
+                                            mEt_userPassword.setVisibility(View.INVISIBLE);
+                                            mBt_login.setVisibility(View.INVISIBLE);
+                                            mSw_teacher.setVisibility(View.INVISIBLE);
+
                                         SharedPrefManager.getInstance(getApplicationContext())
                                                 .studentLogin(
                                                         jsonObject.getString("s_id"),
@@ -153,8 +165,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         Toast.makeText(
                                                 getApplicationContext(),
                                                 jsonObject.getString("message"),
-                                                Toast.LENGTH_LONG
+                                                Toast.LENGTH_SHORT
                                         ).show();
+
+                                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                        finish();
+
                                     }
 
                                 } catch (JSONException e){
@@ -168,9 +184,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 mProgressBar.setVisibility(View.INVISIBLE);
                                 Toast.makeText(
                                         getApplicationContext(),
-                                        error.getMessage(),
+                                        "Connection failed, Please try again",
                                         Toast.LENGTH_LONG
                                 ).show();
+                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                finish();
                             }
                         }){
 
@@ -208,12 +226,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(!SharedPrefManager.getInstance(this).isLoggedIn()) {
             mUser_id = mEt_userId.getText().toString().trim();
             mUser_password = mEt_userPassword.getText().toString().trim();
+
+            mEt_userId.setVisibility(View.INVISIBLE);
+            mEt_userPassword.setVisibility(View.INVISIBLE);
+            mBt_login.setVisibility(View.INVISIBLE);
+            mSw_teacher.setVisibility(View.INVISIBLE);
         }
         final String user_id = mUser_id;
         final String user_password = mUser_password;
 
 
         mProgressBar.setVisibility(View.VISIBLE);
+
 
         StringRequest stringRequest = new StringRequest
                 (Request.Method.POST, Constants.URL_T_LOGIN,
@@ -252,7 +276,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         //Get us to TeacherActivity screen
                                         Intent intent = new Intent(getApplicationContext(), TeacherActivity.class);
                                         intent.putExtra("EXTRA_TEACHER_COURSES_SIZE", list_of_courses.size());
-                                        intent.putExtra("EXTRA_TEACHER_COURSES_NAME", list_of_courses);
+                                        intent.putExtra("EXTRA_TEACHER_COURSES_NAME_ID", list_of_courses);
 
                                         startActivity(intent);
                                         finish();
@@ -260,8 +284,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         Toast.makeText(
                                                 getApplicationContext(),
                                                 jsonObject.getString("message"),
-                                                Toast.LENGTH_LONG
+                                                Toast.LENGTH_SHORT
                                         ).show();
+
+                                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                        finish();
                                     }
 
                                 } catch (JSONException e){
@@ -275,9 +302,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 mProgressBar.setVisibility(View.INVISIBLE);
                                 Toast.makeText(
                                         getApplicationContext(),
-                                        error.getMessage(),
+                                        "Connection failed, Please try again",
                                         Toast.LENGTH_LONG
                                 ).show();
+                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                finish();
                             }
                         }){
 
