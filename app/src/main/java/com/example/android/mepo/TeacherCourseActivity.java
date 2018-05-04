@@ -61,7 +61,6 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         COURSE_NAME_ID =  getIntent().getStringExtra("EXTRA_TEACHER_COURSE_NAME_ID");
-        System.out.println("check " + COURSE_NAME_ID);
 
 
     }
@@ -71,7 +70,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
 
 
 
-    public void courseDetails(){
+    public void prevLectures(){
 
         mProgressBar.setVisibility(View.VISIBLE);
 
@@ -144,7 +143,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
                                         "Connection failed, Please try again",
                                         Toast.LENGTH_LONG
                                 ).show();
-                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                //startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                                 finish();
                             }
                         }){
@@ -270,7 +269,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onClick(View v) {
         if(v == mBtn_prev_lectures){
-            courseDetails();
+            prevLectures();
         }
         if(v == mBtn_send_report){
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
@@ -302,10 +301,10 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
         }
 
         if(v == mBtn_start){
-            Toast.makeText(getApplicationContext(),"Start",
-                    Toast.LENGTH_SHORT).show();
-            NsdP2p temp = new NsdP2p();
-            temp.registerService(80);
+
+            Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
+            startActivity(intent);
+
         }
     }
 }

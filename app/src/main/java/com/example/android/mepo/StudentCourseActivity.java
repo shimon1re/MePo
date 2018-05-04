@@ -38,7 +38,10 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_course);
 
-        IsStudentCourseActivity = null;
+
+        initComponnents();
+
+
 
         //check if user logged in or not.
         if(!SharedPrefManager.getInstance(this).isLoggedIn()){
@@ -46,6 +49,20 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
             startActivity(new Intent(this, LoginActivity.class));
         }
 
+
+    }
+
+
+
+
+
+
+
+
+
+    public void initComponnents(){
+
+        IsStudentCourseActivity = null;
         mBtn_start = findViewById(R.id.btn_start);
         mBtn_prev_lectures = findViewById(R.id.btn_previous_lectures);
 
@@ -54,10 +71,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         COURSE_NAME_ID =  getIntent().getStringExtra("EXTRA_STUDENT_COURSE_NAME_ID");
-
     }
-
-
 
 
 
@@ -129,8 +143,6 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
                                         "Connection failed, Please try again",
                                         Toast.LENGTH_LONG
                                 ).show();
-                                finish();
-                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                             }
                         }){
 

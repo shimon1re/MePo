@@ -41,27 +41,7 @@ public class StudentActivity extends AppCompatActivity
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         String formattedDate = df.format(c);*/
 
-
-        mTvUserWelcome = findViewById(R.id.tv_hello_user);
-        mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
-
-
-        STUDENT_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_STUDENT_COURSES_SIZE",0);
-
-        list_of_courses_names = getIntent().getStringArrayListExtra("EXTRA_STUDENT_COURSES_NAME");
-        System.out.println(list_of_courses_names);
-
-
-        mNumbersListRecycler = findViewById(R.id.rv_studentCourses);
-
-        IsStudentCourseActivity = null;
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mNumbersListRecycler.setLayoutManager(layoutManager);
-        mNumbersListRecycler.setHasFixedSize(true);
-        //Initializing the RecyclerViewAdapter class
-        mAdapter = new RecyclerViewAdapter(STUDENT_NUM_LIST_ITEMS, this);
-        mNumbersListRecycler.setAdapter(mAdapter);
+        initComponnents();
 
 
         //check if user logged in or not.
@@ -74,6 +54,28 @@ public class StudentActivity extends AppCompatActivity
 
 
 
+
+
+    public void initComponnents(){
+
+        mTvUserWelcome = findViewById(R.id.tv_hello_user);
+        mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
+
+        STUDENT_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_STUDENT_COURSES_SIZE",0);
+
+        list_of_courses_names = getIntent().getStringArrayListExtra("EXTRA_STUDENT_COURSES_NAME");
+        mNumbersListRecycler = findViewById(R.id.rv_studentCourses);
+
+        IsStudentCourseActivity = null;
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mNumbersListRecycler.setLayoutManager(layoutManager);
+        mNumbersListRecycler.setHasFixedSize(true);
+        //Initializing the RecyclerViewAdapter class
+        mAdapter = new RecyclerViewAdapter(STUDENT_NUM_LIST_ITEMS, this);
+        mNumbersListRecycler.setAdapter(mAdapter);
+
+    }
 
 
 

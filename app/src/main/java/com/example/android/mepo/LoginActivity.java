@@ -33,10 +33,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button mBt_login;
     private Switch mSw_teacher;
     private ProgressBar mProgressBar;
-
     private String mUser_id;
     private String mUser_password;
-
     public static String IsStudent;
 
 
@@ -47,9 +45,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        initComponents();
+        checkIfUserisLoggedIn();
+
+
+    }
+
+
+
+
+    public void initComponents(){
 
         mProgressBar = findViewById(R.id.pb_loading_indicator);
+        mEt_userId = findViewById(R.id.et_userId);
+        mEt_userPassword = findViewById(R.id.et_userPassword);
+        mBt_login = findViewById(R.id.btn_login);
+        mSw_teacher = findViewById(R.id.sw_teacher);
+        mBt_login.setOnClickListener(this);
 
+    }
+
+
+
+
+    public void checkIfUserisLoggedIn(){
         //if user already logged in then pass him to his activity
         if(SharedPrefManager.getInstance(this).isLoggedIn()){
 
@@ -70,22 +89,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
 
         }
-
-
-
-        mEt_userId = findViewById(R.id.et_userId);
-        mEt_userPassword = findViewById(R.id.et_userPassword);
-        mBt_login = findViewById(R.id.btn_login);
-        mSw_teacher = findViewById(R.id.sw_teacher);
-
-        mBt_login.setOnClickListener(this);
-
     }
-
-
-
-
-
 
 
 
@@ -187,7 +191,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         "Connection failed, Please try again",
                                         Toast.LENGTH_LONG
                                 ).show();
-                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                //startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                                 finish();
                             }
                         }){
@@ -305,7 +309,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         "Connection failed, Please try again",
                                         Toast.LENGTH_LONG
                                 ).show();
-                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                //startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                                 finish();
                             }
                         }){

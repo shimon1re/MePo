@@ -161,7 +161,7 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
                                         "Connection failed, Please try again",
                                         Toast.LENGTH_LONG
                                 ).show();
-                                startActivity(new Intent(getApplicationContext(), TeacherActivity.class));
+                                startActivity(new Intent(getApplicationContext(), TeacherCourseActivity.class));
                                 finish();
                             }
                         }){

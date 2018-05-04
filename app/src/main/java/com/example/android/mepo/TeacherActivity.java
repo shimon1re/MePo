@@ -53,11 +53,29 @@ public class TeacherActivity extends AppCompatActivity
 
         //mProgressBar = findViewById(R.id.pb_loading_indicator);
 
+        initComponnents();
+
+
+
+
+        //check if user logged in or not.
+        if(!SharedPrefManager.getInstance(this).isLoggedIn()){
+            finish();
+            startActivity(new Intent(this, LoginActivity.class));
+        }
+    }
+
+
+
+
+
+
+
+    public void initComponnents(){
+
         TEACHER_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_TEACHER_COURSES_SIZE",0);
 
         list_of_courses_names_id = getIntent().getStringArrayListExtra("EXTRA_TEACHER_COURSES_NAME_ID");
-        System.out.println(list_of_courses_names_id);
-
 
         mNumbersListRecycler = findViewById(R.id.rv_teacherCourses);
 
@@ -71,16 +89,7 @@ public class TeacherActivity extends AppCompatActivity
         mAdapter = new RecyclerViewAdapter(TEACHER_NUM_LIST_ITEMS, this);
         mNumbersListRecycler.setAdapter(mAdapter);
 
-
-        //check if user logged in or not.
-        if(!SharedPrefManager.getInstance(this).isLoggedIn()){
-            finish();
-            startActivity(new Intent(this, LoginActivity.class));
-        }
     }
-
-
-
 
 
 
