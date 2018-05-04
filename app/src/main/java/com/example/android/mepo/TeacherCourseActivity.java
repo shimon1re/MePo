@@ -144,7 +144,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
                                         Toast.LENGTH_LONG
                                 ).show();
                                 //startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                                finish();
+                                //finish();
                             }
                         }){
 
