@@ -67,6 +67,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
         mBtn_prev_lectures = findViewById(R.id.btn_previous_lectures);
 
         mBtn_prev_lectures.setOnClickListener(this);
+        mBtn_start.setOnClickListener(this);
 
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
@@ -207,6 +208,13 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
 
         if(v == mBtn_prev_lectures){
             courseDetails();
+        }
+
+        if(v == mBtn_start){
+
+            Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
+            startActivity(intent);
+
         }
 
     }
