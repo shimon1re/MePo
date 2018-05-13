@@ -35,6 +35,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
     private ProgressBar mProgressBar;
     private String COURSE_NAME_ID;
     public static String IsTeacherCourseActivity;
+    ArrayList<String> list_of_students_in_course = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,8 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         COURSE_NAME_ID =  getIntent().getStringExtra("EXTRA_TEACHER_COURSE_NAME_ID");
+
+        list_of_students_in_course = getIntent().getStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE");
 
 
     }
@@ -301,8 +304,11 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
         }
 
         if(v == mBtn_start){
+            //intent.putExtra("EXTRA_LECTURES_DETAILS", list_of_students_in_course);
 
+            System.out.println("list_of_students_in_course: " + list_of_students_in_course);
             Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
+            intent.putStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE",list_of_students_in_course);
             startActivity(intent);
 
         }

@@ -54,6 +54,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             }
         }
         else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+
             // Respond to new connection or disconnections
             if(mManager == null){
                 return;
@@ -61,13 +62,19 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
             NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
-
+            System.out.println("networkInfo.getDetailedState(): " + networkInfo.getDetailedState());
+            System.out.println("networkInfo.isConnected(): " + networkInfo.isConnected());
             if(networkInfo.isConnected()){
+                mActivity.connectionStatus.setText("Connected");
                 mManager.requestConnectionInfo(mChannel, mActivity.connectionInfoListener);
                 mManager.requestGroupInfo(mChannel, mActivity.groupInfoListener);
+
             }
             else {
                 mActivity.connectionStatus.setText("Device Disconnected");
+                mManager.requestConnectionInfo(mChannel, mActivity.connectionInfoListener);
+                mManager.requestGroupInfo(mChannel, mActivity.groupInfoListener);
+
             }
         }
         else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
