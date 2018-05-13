@@ -27,6 +27,7 @@ public class SharedPrefManager {
     private static final String KEY_USER_LASTNAME = "userlastname";
     private static final String KEY_USER_EMAIL = "useremail";
     private static final String KEY_USER_DEPARTMENT = "userdepartment";
+    private static final String KEY_USER_IS_STUDENT = "userisstudent";
 
     private SharedPrefManager(Context context) {
         mCtx = context;
@@ -51,6 +52,7 @@ public class SharedPrefManager {
         editor.putString(KEY_USER_LASTNAME, lastName);
         editor.putString(KEY_USER_EMAIL, email);
         editor.putString(KEY_USER_DEPARTMENT, department);
+        editor.putString(KEY_USER_IS_STUDENT, "yes");
 
         editor.apply();
 
@@ -94,6 +96,12 @@ public class SharedPrefManager {
     public String getUserId(){
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_USER_ID, null);
+    }
+
+
+    public String getUserIsStudent(){
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(KEY_USER_IS_STUDENT, null);
     }
 
     public String getUserPassword(){

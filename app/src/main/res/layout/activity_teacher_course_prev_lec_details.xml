@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_studentCourses"
+        android:id="@+id/rv_studentsInLecture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="80sp"
@@ -20,13 +20,14 @@
 
 
     <TextView
-        android:id="@+id/tv_hello_user"
+        android:id="@+id/tv_student_presence"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
-        android:paddingLeft="70sp"
+        android:paddingBottom="16sp"
+        android:paddingLeft="80sp"
         android:paddingRight="10sp"
         android:paddingTop="30sp"
+        android:text="Student presence:"
         android:textSize="25sp" />
 
 </FrameLayout>
