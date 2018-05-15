@@ -3,33 +3,24 @@ package com.example.android.mepo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.net.wifi.WifiManager;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 //import java.nio.channels.Channel;
@@ -74,17 +65,10 @@ public class MyWiFiActivity extends AppCompatActivity {
         exqListener();
 
 
-
     }
 
 
-
-
-
-
-
-
-    public void exqListener(){
+    public void exqListener() {
 
         btnOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,7 +76,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                 if (wifiManager.isWifiEnabled()) {
                     wifiManager.setWifiEnabled(false);
                     btnOnOff.setText("ON");
-                }else {
+                } else {
                     wifiManager.setWifiEnabled(true);
                     btnOnOff.setText("OFF");
                 }
@@ -103,7 +87,7 @@ public class MyWiFiActivity extends AppCompatActivity {
         btnDiscover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mManager != null) {
+                if (mManager != null) {
                     /**To discover peers that are available to connect to, call discoverPeers() to detect
                      *  available peers that are in range. The call to this function is asynchronous and a
                      *  success or failure is communicated to your application with onSuccess() and onFailure()*/
@@ -113,7 +97,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                          *  provide any information about the actual peers that it discovered, if any*/
                         public void onSuccess() {
                             connectionStatus.setText("Discovery Started");
-                            if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null && haveGroup == false) {
+                            if (SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null && haveGroup == false) {
                                 mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
                                     @Override
                                     public void onSuccess() {
@@ -150,7 +134,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                 final WifiP2pDevice device = deviceArray[position];
                 WifiP2pConfig config = new WifiP2pConfig();
                 config.deviceAddress = device.deviceAddress;
-                if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
+                if (SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
                     mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
                         @Override
                         public void onSuccess() {
@@ -186,22 +170,21 @@ public class MyWiFiActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
-                        @Override
-                        public void onSuccess() {
-                            Toast.makeText(getApplicationContext(), "Group removed by: " +
-                                    SharedPrefManager.getInstance(getApplicationContext()).getUserFName(), Toast.LENGTH_SHORT).show();
-                            haveGroup = false;
-                            clients.clear();
-                            grouplistView.removeAllViewsInLayout();
-                        }
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(getApplicationContext(), "Group removed by: " +
+                                SharedPrefManager.getInstance(getApplicationContext()).getUserFName(), Toast.LENGTH_SHORT).show();
+                        haveGroup = false;
+                        clients.clear();
+                        grouplistView.removeAllViewsInLayout();
+                    }
 
-                        @Override
-                        public void onFailure(int reason) {
-                            Toast.makeText(getApplicationContext(), "Group remove failed. Retry.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
+                    @Override
+                    public void onFailure(int reason) {
+                        Toast.makeText(getApplicationContext(), "Group remove failed. Retry.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
 
 
                 //String msg = writeMsg.getText().toString().trim();
@@ -211,10 +194,8 @@ public class MyWiFiActivity extends AppCompatActivity {
     }
 
 
-
-
-    public void discoverAndCreateGroup(){
-        if(mManager != null) {
+    public void discoverAndCreateGroup() {
+        if (mManager != null) {
             /**To discover peers that are available to connect to, call discoverPeers() to detect
              *  available peers that are in range. The call to this function is asynchronous and a
              *  success or failure is communicated to your application with onSuccess() and onFailure()*/
@@ -224,7 +205,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                  *  provide any information about the actual peers that it discovered, if any*/
                 public void onSuccess() {
                     connectionStatus.setText("Discovery Started");
-                    if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
+                    if (SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
                         mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
                             @Override
                             public void onSuccess() {
@@ -254,12 +235,12 @@ public class MyWiFiActivity extends AppCompatActivity {
     }
 
 
+    public void initWork() {
 
-    public void initWork(){
         btnOnOff = findViewById(R.id.onOff);
         btnDiscover = findViewById(R.id.discover);
         btnEnd = findViewById(R.id.endButton);
-        if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null)
+        if (SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null)
             btnEnd.setVisibility(View.INVISIBLE);
         listView = findViewById(R.id.peerListView);
         grouplistView = findViewById(R.id.peerListView);
@@ -273,7 +254,7 @@ public class MyWiFiActivity extends AppCompatActivity {
             /** register your application with the Wi-Fi P2P framework by calling initialize().
              *  This method returns a WifiP2pManager.Channel, which is used to connect your application
              *  to the Wi-Fi P2P framework.*/
-            mChannel =  mManager.initialize(this, getMainLooper(), null);
+            mChannel = mManager.initialize(this, getMainLooper(), null);
             if (mChannel == null) {
                 //Failure to set up connection
                 Toast.makeText(this, "Failed to set up connection with wifi p2p service", Toast.LENGTH_LONG).show();
@@ -289,6 +270,7 @@ public class MyWiFiActivity extends AppCompatActivity {
          *  update it accordingly. It also lets you manipulate the device's Wi-Fi state if necessary: */
         mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
 
+
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -297,14 +279,15 @@ public class MyWiFiActivity extends AppCompatActivity {
     }
 
 
-
-    /**when a list of peers is available:
+    /**
+     * when a list of peers is available:
      * The onPeersAvailable() method provides you with an WifiP2pDeviceList,
-     * which you can iterate through to find the peer that you want to connect to.*/
+     * which you can iterate through to find the peer that you want to connect to.
+     */
     WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
         @Override
         public void onPeersAvailable(WifiP2pDeviceList peerList) {
-            if(!peerList.getDeviceList().equals(peers)){
+            if (!peerList.getDeviceList().equals(peers)) {
                 peers.clear();
                 peers.addAll(peerList.getDeviceList());
 
@@ -313,8 +296,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                 int index = 0;
 
                 /**Initialize a set of found devices*/
-                for (WifiP2pDevice device : peerList.getDeviceList())
-                {
+                for (WifiP2pDevice device : peerList.getDeviceList()) {
                     deviceNameArray[index] = device.deviceName;
                     //deviceNameArray[index] = SharedPrefManager.getInstance(getApplicationContext()).getUserFName();
                     deviceArray[index] = device;
@@ -322,14 +304,13 @@ public class MyWiFiActivity extends AppCompatActivity {
                 }
 
                 /**Displays the devices names in the ListView*/
-                if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
+                if (SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) { // is student
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
                             android.R.layout.simple_list_item_1, deviceNameArray);
-                    listView.setAdapter(adapter);
                 }
             }
 
-            if(peers.size() == 0){
+            if (peers.size() == 0) {
                 Toast.makeText(getApplicationContext(), "No Device Found", Toast.LENGTH_SHORT).show();
             }
         }
@@ -338,7 +319,7 @@ public class MyWiFiActivity extends AppCompatActivity {
     WifiP2pManager.GroupInfoListener groupInfoListener = new WifiP2pManager.GroupInfoListener() {
         @Override
         public void onGroupInfoAvailable(WifiP2pGroup group) {
-            if(!group.getClientList().equals(clients)){
+            if (!group.getClientList().equals(clients)) {
                 clients.clear();
                 clients.addAll(group.getClientList());
 
@@ -347,26 +328,24 @@ public class MyWiFiActivity extends AppCompatActivity {
                 int index = 0;
 
                 /**Initialize a set of found devices*/
-                for (WifiP2pDevice device : group.getClientList())
-                {
+                for (WifiP2pDevice device : group.getClientList()) {
                     groupDevicesNamesArray[index] = device.deviceName;
                     //deviceNameArray[index] = SharedPrefManager.getInstance(getApplicationContext()).getUserFName();
                     groupDeviceArray[index] = device;
                     index++;
                 }
                 /**Displays the devices names in the ListView*/
-                if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
+                if (SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
                             android.R.layout.simple_list_item_1, groupDevicesNamesArray);
                     grouplistView.setAdapter(adapter);
                 }
             }
-            if(clients.size() == 0){
+            if (clients.size() == 0) {
                 Toast.makeText(getApplicationContext(), "No Device Found", Toast.LENGTH_SHORT).show();
             }
         }
     };
-
 
 
     //Device connection information
@@ -376,13 +355,13 @@ public class MyWiFiActivity extends AppCompatActivity {
             final InetAddress groupOwnerAddress = wifiP2pInfo.groupOwnerAddress;
             //System.out.println("oneTimeServer: " + oneTimeServer);
 
-            if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner && haveGroup == true){
+            if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner && haveGroup == true) {
                 //oneTimeServer++;
                 //System.out.println("serverClass");
                 connectionStatus.setText("Host");
                 //serverClass = new ServerClass();
                 //serverClass.start();
-            }else if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner == false) {
+            } else if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner == false) {
                 //Toast.makeText(getApplicationContext(), "clientClass", Toast.LENGTH_SHORT).show();
                 //System.out.println("clientClass");
                 connectionStatus.setText("Client");
@@ -406,147 +385,4 @@ public class MyWiFiActivity extends AppCompatActivity {
         super.onPause();
         unregisterReceiver(mReceiver);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//////////////////////////////////////////////////////// Thread zone /////////////////////////////////////////////////////////////////
-
-
-
-    /*Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what)
-            {
-                case MESSAGE_READ:
-                    byte[] readBuff = (byte[]) msg.obj;
-                    String tempMsg = new String(readBuff,0,msg.arg1);
-                    read_msg_box.setText(tempMsg);
-                    break;
-            }
-            return true;
-        }
-    });*/
-
-
-
-
-    /**
-     * Create a server socket and wait for client connections. This
-     * call blocks until a connection is accepted from a client
-     */
-    /*public class ServerClass extends Thread{
-        Socket socket = null;
-        ServerSocket serverSocket;
-
-        @Override
-        public void run() {
-            try {
-                serverSocket = new ServerSocket(); // <-- create an unbound socket first
-                serverSocket.setReuseAddress(true);
-                serverSocket.bind(new InetSocketAddress(8888)); // <-- now bind it
-                //serverSocket = new ServerSocket(8888);
-                socket = serverSocket.accept();
-                sendReceive = new SendReceive(socket);
-                sendReceive.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-                try {
-                    serverSocket.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
-    }
-
-
-    private class SendReceive extends Thread{
-        private Socket socket;
-        private InputStream inputStream;
-        private OutputStream outputStream;
-
-        public SendReceive(Socket skt){
-            socket = skt;
-            try {
-                inputStream = socket.getInputStream();
-                outputStream = socket.getOutputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void run() {
-            byte[] buffer = new byte[1024];
-            int bytes;
-
-            while(socket != null){
-                try {
-                    bytes = inputStream.read(buffer);
-                    if(bytes > 0){
-                        handler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        public void write(byte[] bytes){
-            try {
-                outputStream.write(bytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
-
-
-
-    /*public class ClientClass extends Thread{
-        Socket socket = null;
-        String hostAdd;
-
-        public ClientClass(InetAddress hosAddress){
-            hostAdd = hosAddress.getHostAddress();
-            socket = new Socket();
-        }
-
-        @Override
-        public void run() {
-            try {
-                /**
-                 * Create a client socket with the host,
-                 * port, and timeout information.
-                 */
-                /*socket.connect(new InetSocketAddress(hostAdd,8888),500);
-                sendReceive = new SendReceive(socket);
-                sendReceive.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
 }

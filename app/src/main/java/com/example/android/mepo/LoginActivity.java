@@ -161,6 +161,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         intent.putExtra("EXTRA_STUDENT_COURSES_SIZE", list_of_courses.size());
                                         intent.putExtra("EXTRA_STUDENT_COURSES_NAME", list_of_courses);
 
+
+
                                         startActivity(intent);
                                         finish();
 

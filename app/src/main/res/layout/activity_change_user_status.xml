@@ -6,4 +6,49 @@
     android:layout_height="match_parent"
     tools:context=".changeUserStatus">
 
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="283dp"
+        android:layout_height="70dp"
+        android:text="Change student status "
+        android:textSize="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.167" />
+
+    <Button
+        android:id="@+id/arriveBut"
+        android:layout_width="118dp"
+        android:layout_height="wrap_content"
+        android:text="Arrive"
+        app:layout_constraintBottom_toTopOf="@+id/approveBut"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView1" />
+
+    <Button
+        android:id="@+id/approveBut"
+        android:layout_width="118dp"
+        android:layout_height="wrap_content"
+        android:text="Approve"
+        app:layout_constraintBottom_toTopOf="@+id/missBut"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/arriveBut" />
+
+    <Button
+        android:id="@+id/missBut"
+        android:layout_width="118dp"
+        android:layout_height="wrap_content"
+        android:text="Miss"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/approveBut" />
+
 </android.support.constraint.ConstraintLayout>

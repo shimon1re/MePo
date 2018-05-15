@@ -113,10 +113,12 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
 
                                         //Get us to TeacherActivity screen
 
+
                                         Intent intent = new Intent(getApplicationContext(), StudentCoursePrevLecActivity.class);
 
                                         intent.putExtra("EXTRA_COURSE_LECTURES_SIZE", list_of_lectures.size());
                                         intent.putExtra("EXTRA_COURSE_LECTURES", list_of_lectures);
+
 
                                         //for the Recyclerview adapter
                                         IsStudentCourseActivity = "yes";

@@ -40,6 +40,7 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
     private Toast mToast;
     //private TextView mTvUserWelcome;
     public static String IsTeacherLecturesActivity;
+    public String l_id;
     public static ArrayList<String> list_of_lectures = new ArrayList<String>();;
 
 
@@ -116,6 +117,7 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
                                             //System.out.println(lectures_arr.length());
                                             for (int i = 0; i < students_in_lecture_arr.length(); i++) {
                                                 list_of_students_in_lecture.add(students_in_lecture_arr.getString(i));
+
                                             }
                                             System.out.println(list_of_students_in_lecture);
                                         }else{
@@ -132,6 +134,11 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
 
                                         intent.putExtra("EXTRA_LECTURES_DETAILS_SIZE", list_of_students_in_lecture.size());
                                         intent.putExtra("EXTRA_LECTURES_DETAILS", list_of_students_in_lecture);
+                                        intent.putExtra("l_id", l_num);
+
+
+
+
 
                                         //for the Recyclerview adapter
                                         //IsCourse = "yes";
@@ -206,6 +213,15 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
         if (mToast != null) {
             mToast.cancel();
         }
+        l_id = list_of_lectures.get(clickedItemIndex).substring(2,3);
+
+        //System.out.println("L_ID"+l_id);
+        //Intent intent = new Intent(getApplicationContext(), TeacherCoursePrevLecDetailsActivity.class);
+        //intent.putExtra("L_ID", l_id);
+        //startActivity(intent);
+
+
+
         //Here we have to load the list of lectures that belong to the specific course,
         //and open them in a new screen.
         //String toastMessage = list_of_courses_names.get(clickedItemIndex).toString().replaceAll("[\\[\"\\],-]","") + " clicked.";
