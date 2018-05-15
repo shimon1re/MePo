@@ -13,6 +13,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.nsd.WifiP2pServiceInfo;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -55,7 +56,7 @@ public class MyWiFiActivity extends AppCompatActivity {
     Button btnOnOff, btnDiscover, btnEnd;
     ListView listView;
     ListView grouplistView;
-    //TextView read_msg_box,
+    TextView read_msg_box;
     TextView connectionStatus;
 
     List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
@@ -75,6 +76,38 @@ public class MyWiFiActivity extends AppCompatActivity {
     static boolean isGroupOwner;
     String courseT_ID;
     ArrayList<String> list_of_students_in_course = new ArrayList<String>();
+
+    CheckPresenceRunnable checkPresenceRunnable;
+    private final int interval = 1000; // 1 Second
+    private  String strDate;
+    private final int TASK_COMPLETE = 1;
+    // Defines a Handler object that's attached to the UI thread
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message inputMessage) {
+
+            checkPresenceRunnable = (CheckPresenceRunnable) inputMessage.obj;
+            strDate = checkPresenceRunnable.strDate;
+
+            switch (inputMessage.what) {
+
+                // The status check is done
+                case TASK_COMPLETE:
+
+                    // write some code...
+                    read_msg_box.setText(strDate);
+
+                    break;
+
+                default:
+                    /*
+                     * Pass along other messages from the UI
+                     */
+                    super.handleMessage(inputMessage);
+            }
+
+        }
+    };
 
 
     //static final int MESSAGE_READ = 1;
@@ -115,7 +148,7 @@ public class MyWiFiActivity extends AppCompatActivity {
         }
 
         connectionStatus = findViewById(R.id.connectionStatus);
-
+        read_msg_box = findViewById(R.id.readMsg);
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (!wifiManager.isWifiEnabled()) {
@@ -170,6 +203,7 @@ public class MyWiFiActivity extends AppCompatActivity {
         btnDiscover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                checkPresenceRunnable = new CheckPresenceRunnable( MyWiFiActivity.this);
                 endButtonPressed = false;
                 discoverAndCreateGroup();
             }
@@ -193,6 +227,8 @@ public class MyWiFiActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 endButtonPressed = true;
+                if(checkPresenceRunnable != null)
+                    checkPresenceRunnable.cancelTimer();
                 if(!connectionStatus.getText().equals("Device Disconnected")) {
                     if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null)
                         mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
@@ -208,6 +244,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                         });
                     removeGroup();
                 }
+
 
             }
         });
@@ -424,6 +461,30 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
+    public void handleState(CheckPresenceRunnable checkPresenceRunnable, int state) {
+
+
+        switch (state) {
+
+            case TASK_COMPLETE:
+
+                 /* Creates a message for the Handler
+                    with the state and the task object*/
+                Message completeMessage = mHandler.obtainMessage(state, checkPresenceRunnable);
+                completeMessage.sendToTarget();
+                //mHandler.sendMessageAtTime(msg, System.currentTimeMillis()+interval);
+                //handler.sendMessageDelayed(msg, interval);
+                break;
+
+        }
+
+    }
+
+
+
+
+
+
 
     /**when a list of peers is available:
      * The onPeersAvailable() method provides you with an WifiP2pDeviceList,
@@ -475,6 +536,9 @@ public class MyWiFiActivity extends AppCompatActivity {
             }
         }
     };
+
+
+
 
 
 
@@ -553,6 +617,9 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
+
+
+
     //Device connection information
     WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
         @Override
@@ -592,6 +659,14 @@ public class MyWiFiActivity extends AppCompatActivity {
 
         }
     };
+
+
+
+
+
+
+
+
 
 
     /* register the broadcast receiver with the intent values to be matched */
