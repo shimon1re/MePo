@@ -19,7 +19,12 @@ public class CheckPresenceRunnable extends TimerTask implements Runnable {
             timer.cancel();
 
         timer = new Timer();
-        timer.schedule(this, 1000, 1000); //1 second
+        //timer.schedule(this, 1000); //1 second
+        // לשנות בין סטודנט למרצה, סטודנט 5 שניות, מרצה כמה דקות
+        if (mMyWifiTaskActivity.isGroupOwner == true)
+            timer.schedule(this, 1000, 5000); //5 second
+        else
+            timer.schedule(this, 1000, 10000); //10 second
     }
 
     @Override
@@ -30,8 +35,6 @@ public class CheckPresenceRunnable extends TimerTask implements Runnable {
         strDate = simpleDateFormat.format(calendar.getTime());
 
 
-
-        //mMyWifiTaskActivity.read_msg_box.setText(strDate);
 
 
         //After the task is done

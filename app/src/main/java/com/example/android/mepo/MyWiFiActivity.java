@@ -38,7 +38,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 //import java.nio.channels.Channel;
 
 
@@ -66,6 +68,7 @@ public class MyWiFiActivity extends AppCompatActivity {
     String[] deviceNameArray;
     String[] groupDevicesNamesArray;
     String[] groupDeviceIsCorrectStudent;
+    Map<String, int[]> stdStatusCountMap;
     WifiP2pDevice[] deviceArray;
     WifiP2pDevice[] groupDeviceArray;
 
@@ -79,15 +82,24 @@ public class MyWiFiActivity extends AppCompatActivity {
 
     CheckPresenceRunnable checkPresenceRunnable;
     private final int interval = 1000; // 1 Second
-    private  String strDate;
+    private int flag = 0, numToRestartDiscovery = 0;
+    boolean studentIsConnect = false;
+    private  String currentDate, startStrDate, endStrDate;
     private final int TASK_COMPLETE = 1;
+
+
     // Defines a Handler object that's attached to the UI thread
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message inputMessage) {
 
             checkPresenceRunnable = (CheckPresenceRunnable) inputMessage.obj;
-            strDate = checkPresenceRunnable.strDate;
+            //תאריך וזמן להתחלת הרצאה
+            currentDate = checkPresenceRunnable.strDate;
+            if(flag == 0) {
+                startStrDate = currentDate;
+                flag = 1;
+            }
 
             switch (inputMessage.what) {
 
@@ -95,8 +107,23 @@ public class MyWiFiActivity extends AppCompatActivity {
                 case TASK_COMPLETE:
 
                     // write some code...
-                    read_msg_box.setText(strDate);
+                    read_msg_box.setText(currentDate);
 
+                    //לכתוב כאן את הקוד לבדיקת נוכחות...
+                    if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null)
+                        checkPresence();
+                    else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null &&
+                            !connectionStatus.getText().equals("Client") && numToRestartDiscovery<5 && studentIsConnect == false) {
+                        resetDiscover();
+                        numToRestartDiscovery++;
+                    }
+                    else{
+                        endStrDate = currentDate;
+                        Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
+                        checkPresenceRunnable.cancelTimer();
+                        flag = 0;
+                        checkPresence();
+                    }
                     break;
 
                 default:
@@ -131,9 +158,24 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
+
+
     public void initWork(){
+        System.out.println("initWork");
         courseT_ID =  getIntent().getStringExtra("EXTRA_TEACHER_ID");
         list_of_students_in_course = getIntent().getStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE");
+
+        stdStatusCountMap = new HashMap<>();
+        int[] statusCount =new int[1];
+        statusCount[0] = 0;
+        String clean;
+        if(list_of_students_in_course != null) {
+            for (int i = 0; i < list_of_students_in_course.size(); i++) {
+                clean = list_of_students_in_course.get(i);
+                clean = clean.replaceAll("[\\[\"\\],-]", "");
+                stdStatusCountMap.put(clean, statusCount);
+            }
+        }
         btnOnOff = findViewById(R.id.onOff);
         btnDiscover = findViewById(R.id.discover);
         btnEnd = findViewById(R.id.endButton);
@@ -188,6 +230,7 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
+
     public void exqListener(){
 
         btnOnOff.setOnClickListener(new View.OnClickListener() {
@@ -203,7 +246,10 @@ public class MyWiFiActivity extends AppCompatActivity {
         btnDiscover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null)
                 checkPresenceRunnable = new CheckPresenceRunnable( MyWiFiActivity.this);
+
                 endButtonPressed = false;
                 discoverAndCreateGroup();
             }
@@ -227,8 +273,14 @@ public class MyWiFiActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 endButtonPressed = true;
-                if(checkPresenceRunnable != null)
+                if(checkPresenceRunnable != null && SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
+                    endStrDate = currentDate;
+                    Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
                     checkPresenceRunnable.cancelTimer();
+                    flag = 0;
+                    checkPresence();
+
+                }
                 if(!connectionStatus.getText().equals("Device Disconnected")) {
                     if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null)
                         mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
@@ -242,6 +294,8 @@ public class MyWiFiActivity extends AppCompatActivity {
 
                             }
                         });
+                    studentIsConnect = false;
+                    numToRestartDiscovery = 0;
                     removeGroup();
                 }
 
@@ -265,11 +319,14 @@ public class MyWiFiActivity extends AppCompatActivity {
                 public void onSuccess() {
                     studentConnected = true;
                     Toast.makeText(getApplicationContext(), "Connected to: " + deviceNameArray[0], Toast.LENGTH_SHORT).show();
+                    studentIsConnect = true;
+                    numToRestartDiscovery=0;
+                    connectionStatus.setText("Client");
                 }
 
                 @Override
                 public void onFailure(int reason) {
-                    Toast.makeText(getApplicationContext(), "Connect failed. Retry.", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "Connect failed. Retry.", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -284,7 +341,7 @@ public class MyWiFiActivity extends AppCompatActivity {
 
         if(mManager != null && wifiManager.isWifiEnabled()) {
             if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null &&
-                    (!connectionStatus.getText().equals("Host") && !connectionStatus.getText().equals("Connected")) /*&& haveGroup == false*/) {
+                    (!connectionStatus.getText().equals("Host") && haveGroup == false) /*&& !connectionStatus.getText().equals("Connected"))*/ /**/) {
 
                 mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
                     @Override
@@ -292,7 +349,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                         // Device is ready to accept incoming connections from peers.
                         Toast.makeText(getApplicationContext(), "Group Created" , Toast.LENGTH_SHORT).show();
                         haveGroup = true;
-
+                        endStrDate = null;
                     }
 
                     @Override
@@ -304,7 +361,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                     }
                 });
             }
-            else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null /*&& !read_msg_box.getText().equals("Discovery Started")*/){
+            else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null ){
                 /**To discover peers that are available to connect to, call discoverPeers() to detect
                  *  available peers that are in range. The call to this function is asynchronous and a
                  *  success or failure is communicated to your application with onSuccess() and onFailure()*/
@@ -365,6 +422,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                 haveGroup = false;
                 //clients.clear();
                 if (SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null ){
+                    clearStdStatusCountMap();
                     resetListView(1);
                     if(clients.size() != 0 && wifiManager.isWifiEnabled()) {
                         wifiManager.setWifiEnabled(false);
@@ -378,8 +436,8 @@ public class MyWiFiActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int reason) {
-                    Toast.makeText(getApplicationContext(), "Group remove failed. Retry.",
-                        Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "Group remove failed. Retry.",
+                      //  Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -413,6 +471,7 @@ public class MyWiFiActivity extends AppCompatActivity {
             listView.setAdapter(adapter);
         }
     }
+
 
 
 
@@ -461,6 +520,7 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
+
     public void handleState(CheckPresenceRunnable checkPresenceRunnable, int state) {
 
 
@@ -472,13 +532,151 @@ public class MyWiFiActivity extends AppCompatActivity {
                     with the state and the task object*/
                 Message completeMessage = mHandler.obtainMessage(state, checkPresenceRunnable);
                 completeMessage.sendToTarget();
-                //mHandler.sendMessageAtTime(msg, System.currentTimeMillis()+interval);
+                //mHandler.sendMessageAtTime(mHandler.obtainMessage(state), System.currentTimeMillis()+interval);
                 //handler.sendMessageDelayed(msg, interval);
                 break;
 
         }
 
     }
+
+
+
+
+
+
+    public void checkPresence(){
+
+        String stdInCourse ;
+        int startHouer, startMin, endHouer, endMin, subHouers, subMinutes,
+                sumOfMinutes = 0;
+        float numOfCheckBeats = 0;
+
+
+        //זמני עד שאסיים לבדוק את החישוב...ואז אעביר לשעות ודקות
+        //startHouer = Integer.parseInt(startStrDate.substring(10,12));
+        //startMin = Integer.parseInt(startStrDate.substring(13,15));
+        startHouer = Integer.parseInt(startStrDate.substring(13,15));
+        startMin = Integer.parseInt(startStrDate.substring(16,18));
+        if(endStrDate != null) {
+            //endHouer = Integer.parseInt(endStrDate.substring(10, 12));
+            //endMin = Integer.parseInt(endStrDate.substring(13, 15));
+            endHouer = Integer.parseInt(endStrDate.substring(13, 15));
+            endMin = Integer.parseInt(endStrDate.substring(16, 18));
+            System.out.println("startHouer " + startHouer + "   startMin " + startMin);
+            System.out.println("endHouer " + endHouer + "   endMin " + endMin);
+            subHouers = endHouer - startHouer;
+            if(subHouers < 0) {
+                subHouers = 24 + (subHouers);
+            }
+            if(subHouers > 0)
+                sumOfMinutes = (--subHouers) * 60;
+            subMinutes = endMin - startMin;
+            if(subMinutes <= 0 ){
+                subMinutes = 60 + (subMinutes);
+            }
+            sumOfMinutes = sumOfMinutes + subMinutes;
+            if(sumOfMinutes > 0)
+                numOfCheckBeats = (float)sumOfMinutes / 10; //10(minutes) equal to check interval time
+            System.out.println("sumOfMinutes " + sumOfMinutes);
+
+            reportStudentsPresence(numOfCheckBeats);
+
+        }
+
+
+        if(list_of_students_in_course != null) {
+            for (int i = 0; i < list_of_students_in_course.size(); i++) {
+                stdInCourse = list_of_students_in_course.get(i);
+                stdInCourse = stdInCourse.replaceAll("[\\[\"\\],-]", "");
+                if (groupDeviceIsCorrectStudent.length > 0) {
+                    for (int j = 0; j < groupDeviceIsCorrectStudent.length; j++) {
+
+                        if (stdInCourse.equals(groupDeviceIsCorrectStudent[j])) {
+                            int[] appendStatusCount = new int[1];
+                            appendStatusCount[0] = stdStatusCountMap.get(stdInCourse)[0];
+                            appendStatusCount[0]++;
+                            stdStatusCountMap.put(stdInCourse, appendStatusCount);
+                            System.out.println("stdInCourse: " + stdInCourse + " StatusCount: " + appendStatusCount[0]);
+                        }
+                    }
+                }
+                //System.out.println(stdStatusCountMap.get(clean)[0]);
+            }
+        }
+
+    }
+
+
+
+    public ArrayList<String> reportStudentsPresence(float numOfCheckBeats){
+
+        String stdInCourse;
+        ArrayList<String> reportThisStudentToDB = new ArrayList<>();
+        float pass = 0;
+        System.out.println("numOfCheckBeats " + numOfCheckBeats);
+        if(list_of_students_in_course != null) {
+            for (int i = 0; i < list_of_students_in_course.size(); i++) {
+                stdInCourse = list_of_students_in_course.get(i);
+                stdInCourse = stdInCourse.replaceAll("[\\[\"\\],-]", "");
+                pass =  (numOfCheckBeats / (float) stdStatusCountMap.get(stdInCourse)[0]);
+                System.out.println("stdInCourse: " + stdInCourse + "  count: " + stdStatusCountMap.get(stdInCourse)[0]);
+                System.out.println("pass" + pass);
+                if( pass > 0.5 && stdStatusCountMap.get(stdInCourse)[0] != 0){
+                    System.out.println("----------------------------------");
+                    System.out.println("stdInCourse: " + stdInCourse + "  count: " + stdStatusCountMap.get(stdInCourse)[0]);
+                    System.out.println("pass" + pass);
+                    reportThisStudentToDB.add(stdInCourse);
+                }
+
+
+            }
+        }
+        System.out.println("reportThisStudentToDB: " + reportThisStudentToDB);
+
+
+        return reportThisStudentToDB;
+    }
+
+
+
+
+    public void clearStdStatusCountMap(){
+        if(stdStatusCountMap!=null && list_of_students_in_course!=null) {
+            for (int i=0; i<stdStatusCountMap.size();i++){
+                String stdInCourse = list_of_students_in_course.get(i);
+                stdInCourse = stdInCourse.replaceAll("[\\[\"\\],-]", "");
+                int[] clearStatusCount = new int[1];
+                clearStatusCount[0] = 0;
+                stdStatusCountMap.put(stdInCourse, clearStatusCount);
+            }
+        }
+    }
+
+
+
+
+
+    public void resetDiscover(){
+        if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null)
+            mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onFailure(int reason) {
+
+                }
+            });
+        removeGroup();
+        discoverAndCreateGroup();
+    }
+
+
+
+
 
 
 
@@ -499,21 +697,20 @@ public class MyWiFiActivity extends AppCompatActivity {
 
                 deviceNameArray = new String[1];
                 deviceArray = new WifiP2pDevice[1];
-                int index = 0;
 
                 /**Initialize a set of found devices for student*/
                 if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
 
                     for (WifiP2pDevice device : peerList.getDeviceList()) {
-                        if(device.deviceName.equals(courseT_ID)) {
+                        System.out.println("device founded: " + device.deviceName);
+                        if(device.deviceName.equals(courseT_ID) ) {
                             System.out.println("equal");
                             System.out.println("device.isGroupOwner(): " + device.isGroupOwner());
                             deviceNameArray[0] = device.deviceName;
                             deviceArray[0] = device;
-                            //index++;
 
                             if(studentConnected == false && SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
-                                Toast.makeText(getApplicationContext(), device.deviceName + " Found", Toast.LENGTH_SHORT).show();
+
                                 connectToTeacherGroup(0);
                             }
                         }
@@ -589,6 +786,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                                 groupDeviceIsCorrectStudent[i] = groupDevicesNamesArray[i];
                                 if(flag == 1 )
                                     Toast.makeText(getApplicationContext(), groupDeviceIsCorrectStudent[i] + " connected", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(),"index " + index, Toast.LENGTH_SHORT).show();
                                 System.out.println("insert to the new arrey: " + groupDeviceIsCorrectStudent[i]);
                             }
                         }
@@ -596,7 +794,7 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
                     /**Displays the devices names in the ListView*/
-                    if (SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null && index > 0) {
+                    if (SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null ) {
                         groupAdapter = new ArrayAdapter<String>(getApplicationContext(),
                                 android.R.layout.simple_list_item_1, groupDeviceIsCorrectStudent);
                         grouplistView.setAdapter(groupAdapter);
@@ -626,22 +824,28 @@ public class MyWiFiActivity extends AppCompatActivity {
         public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
             final InetAddress groupOwnerAddress = wifiP2pInfo.groupOwnerAddress;
             wifiP2pInfo_forGroup = wifiP2pInfo;
-
+            if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
+                haveGroup = true;
+                isGroupOwner = true;
+            }
             if(connectionStatus.getText().equals("Device Disconnected") &&
                     SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null ){
                     studentConnected = false;
                 resetListView(0);
             }
             else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null &&
-                    connectionStatus.getText().equals("Device Disconnected") ){
+                    connectionStatus.getText().equals("Device Disconnected") && endButtonPressed == false ){
+                resetListView(1);
+                discoverAndCreateGroup();
             }
 
-            Toast.makeText(getApplicationContext(),connectionStatus.getText() , Toast.LENGTH_SHORT).show();
 
             if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner && haveGroup == true){
                 //oneTimeServer++;
                 //System.out.println("serverClass");
                 connectionStatus.setText("Host");
+                if(checkPresenceRunnable == null)
+                    checkPresenceRunnable = new CheckPresenceRunnable( MyWiFiActivity.this);
                 //serverClass = new ServerClass();
                 //serverClass.start();
             }else if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner == false) {
@@ -656,7 +860,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                 //clientClass.start();
             }
 
-
+            Toast.makeText(getApplicationContext(),connectionStatus.getText() , Toast.LENGTH_SHORT).show();
         }
     };
 

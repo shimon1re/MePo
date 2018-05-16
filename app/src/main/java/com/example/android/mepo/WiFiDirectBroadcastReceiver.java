@@ -69,7 +69,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             if(mManager == null){
                 return;
             }
-
             NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
             System.out.println("networkInfo.getDetailedState(): " + networkInfo.getDetailedState());
@@ -78,6 +77,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 mActivity.connectionStatus.setText("Connected");
                 mManager.requestConnectionInfo(mChannel, mActivity.connectionInfoListener);
                 if(isGroupOwner) {
+                    //mActivity.connectionStatus.setText("Host");
                     mManager.requestGroupInfo(mChannel, mActivity.groupInfoListener);
                 }
 
