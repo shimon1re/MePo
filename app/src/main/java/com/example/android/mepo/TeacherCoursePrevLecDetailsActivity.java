@@ -111,6 +111,7 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
         startActivity(intent);
 
 
+
     }
 
     //Responsible for the logout button

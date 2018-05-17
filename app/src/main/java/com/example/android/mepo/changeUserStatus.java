@@ -118,6 +118,7 @@ public class changeUserStatus extends AppCompatActivity {
 
                                // mProgressBar.setVisibility(View.INVISIBLE);
                                 try{
+
                                     JSONObject jsonObject = new JSONObject(response);
                                     //If there is no error message in the JSON string
                                     if(!jsonObject.getBoolean("error")){

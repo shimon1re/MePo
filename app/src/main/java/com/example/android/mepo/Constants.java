@@ -10,6 +10,10 @@ public class Constants {
     public static final String URL_T_LOGIN = ROOT_URL+"teacherLogin.php";
     public static final String URL_T_EXPORTEXCELFILE = ROOT_URL+"exportToExcel.php";
     public static final String URL_CHANGE_STATUS = ROOT_URL+"changeStudentStatus.php";
+    public static final String URL_GET_LNUMBER = ROOT_URL+"getLectureNumber.php";
+
+
+
 
 
 }
