@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -20,22 +21,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StudentCourseActivity" />
-        <activity android:name=".TeacherActivity" />
-        <activity android:name=".StudentActivity" />
-        <activity android:name=".StudentCoursePrevLecActivity" />
-        <activity android:name=".TeacherCourseActivity" />
-        <activity android:name=".TeacherCoursePrevLecActivity" />
-        <activity android:name=".TeacherCoursePrevLecDetailsActivity" />
-        <activity android:name=".MyWiFiActivity" />
-        <activity android:name=".changeUserStatus" />
+
+        <activity android:name=".StudentCourseActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".TeacherActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".StudentActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".StudentCoursePrevLecActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".TeacherCourseActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".TeacherCoursePrevLecActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".TeacherCoursePrevLecDetailsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MyWiFiActivity"
+            android:screenOrientation="portrait"></activity>
+
     </application>
 
 </manifest>

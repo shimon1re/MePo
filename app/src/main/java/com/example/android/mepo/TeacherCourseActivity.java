@@ -38,12 +38,17 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
     private ProgressBar mProgressBar;
     private String COURSE_NAME_ID;
     public static String IsTeacherCourseActivity;
+
+    ArrayList<String> list_of_students_in_course = new ArrayList<String>();
+
+
     public Date time;
     public String dateAndTime; // hold the current date and time in one format
     public String c_id; //Hold the course id.
     public String t_id; // Hold the tid
     public String maxLectureNumber; // the last lecture of particular course as String
     public int intMaxLectureNumber; //  the last lecture of particular converting to int.
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +74,8 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         COURSE_NAME_ID = getIntent().getStringExtra("EXTRA_TEACHER_COURSE_NAME_ID");
+
+        list_of_students_in_course = getIntent().getStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE");
 
 
     }
@@ -291,6 +298,8 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
             //sendCourseReport();
         }
 
+
+
         if (v == mBtn_start) {// =-====Add new lecture======
             getMaxLecture();
             time = (Calendar.getInstance().getTime());
@@ -300,6 +309,8 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
             t_id = SharedPrefManager.getInstance(getApplicationContext()).getUserId();
             addLecture();// activate and write inset to DB function via post requests
             Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
+            intent.putStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE",list_of_students_in_course);
+            intent.putExtra("EXTRA_TEACHER_COURSE_NAME_ID",COURSE_NAME_ID);
             startActivity(intent);
 
         }

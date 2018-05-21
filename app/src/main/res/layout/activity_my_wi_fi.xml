@@ -23,7 +23,7 @@
             android:layout_marginLeft="28dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="55dp"
-            android:text="Wifi On" />
+            android:text="Wifi" />
 
         <Button
             android:id="@+id/discover"
