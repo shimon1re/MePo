@@ -45,7 +45,7 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
 
         //mTvUserWelcome = findViewById(R.id.tv_hello_user);
         //mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
-
+        Bundle extras = getIntent().getExtras();
 
         STUDENTS_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_LECTURES_DETAILS_SIZE",0);
 
