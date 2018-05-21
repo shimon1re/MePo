@@ -439,9 +439,6 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
                 params.put("t_id", t_id);
                 params.put("l_id", String.valueOf(intMaxLectureNumber));
 
-
-
-
                 return params;
             }
         };
