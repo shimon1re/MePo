@@ -298,16 +298,9 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
             String temp_c_id = COURSE_NAME_ID.replaceAll("[A-z]", "");
             c_id = temp_c_id.replaceAll("[\\[\"\\],-]", "");
             t_id = SharedPrefManager.getInstance(getApplicationContext()).getUserId();
-
-            //
-            // activate and write inset to DB function via post requests
-            //
-
-
-
-
-            //Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
-            //startActivity(intent);
+            addLecture();// activate and write inset to DB function via post requests
+            Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
+            startActivity(intent);
 
         }
     }
@@ -336,12 +329,8 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
                                         maxLectureNumber= jsonObject.toString();
                                         maxLectureNumber =  maxLectureNumber.replaceAll("[^\\d.]", "");
                                         intMaxLectureNumber= Integer.parseInt(maxLectureNumber);
-
-
-                                        System.out.println(intMaxLectureNumber);
-
-
-
+                                        intMaxLectureNumber = intMaxLectureNumber+1;
+                                        System.out.println("===="+intMaxLectureNumber);
 
 
                                         IsTeacherCourseActivity = "yes";
@@ -392,4 +381,74 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
         RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
 
     }
+
+
+    public void addLecture() {
+
+        mProgressBar.setVisibility(View.VISIBLE);
+
+
+        StringRequest stringRequest = new StringRequest
+                (Request.Method.POST, Constants.URL_T_ACTIVITY,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    //If there is no error message in the JSON string
+                                    if (!jsonObject.getBoolean("error")) {
+
+                                    // NO NEED TO GET JASON ERROR
+
+
+                                    } else {
+                                        Toast.makeText(
+                                                getApplicationContext(),
+                                                jsonObject.getString("message"),
+                                                Toast.LENGTH_LONG
+                                        ).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                Toast.makeText(
+                                        getApplicationContext(),
+                                        "Connection failed, Please try again",
+                                        Toast.LENGTH_LONG
+                                ).show();
+
+                            }
+                        }) {
+
+            //Push parameters to Request.Method.POST
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+
+                params.put("dateAndTime", dateAndTime);
+                params.put("c_id", c_id);
+                params.put("t_id", t_id);
+                params.put("l_id", String.valueOf(intMaxLectureNumber));
+
+
+
+
+                return params;
+            }
+        };
+
+        //Making a connection by singleton class to the database with stringRequest
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+
+    }
+
 }
