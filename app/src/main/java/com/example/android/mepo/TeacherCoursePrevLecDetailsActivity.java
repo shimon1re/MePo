@@ -91,12 +91,7 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
         if (mToast != null) {
             mToast.cancel();
         }
-        //Here we have to load the list of lectures that belong to the specific course,
-        //and open them in a new screen.
-        //String toastMessage = list_of_courses_names.get(clickedItemIndex).toString().replaceAll("[\\[\"\\],-]","") + " clicked.";
-        //mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
-
-        //mToast.show();
+        String S_ID = list_of_students.get(clickedItemIndex).substring(2,7);
     }
 
 
