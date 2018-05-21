@@ -20,7 +20,7 @@ public class CheckPresenceRunnable extends TimerTask implements Runnable {
             timer.cancel();
 
         timer = new Timer();
-        //timer.schedule(this, 1000); //1 second
+
         // לשנות למרצה, מרצה כמה דקות
         if (mMyWifiTaskActivity.isGroupOwner == true)
             timer.schedule(this, 1000, 5000); //5 second
