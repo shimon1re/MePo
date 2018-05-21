@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
         initComponents();
-        checkIfUserisLoggedIn();
+        checkIfUserIsLoggedIn();
 
 
     }
@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
 
-    public void checkIfUserisLoggedIn(){
+    public void checkIfUserIsLoggedIn(){
         //if user already logged in then pass him to his activity
         if(SharedPrefManager.getInstance(this).isLoggedIn()){
 

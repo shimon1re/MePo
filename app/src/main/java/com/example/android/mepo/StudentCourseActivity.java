@@ -30,6 +30,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
     private Button mBtn_prev_lectures,mBtn_start;
     private ProgressBar mProgressBar;
     private String COURSE_NAME_ID;
+    private String t_idOfCourse;
 
     public static String IsStudentCourseActivity;
 
@@ -153,6 +154,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
+                COURSE_NAME_ID = COURSE_NAME_ID.substring(1,COURSE_NAME_ID.length()-7);
                 COURSE_NAME_ID = COURSE_NAME_ID.replaceAll("[A-z]","");
                 COURSE_NAME_ID = COURSE_NAME_ID.replaceAll("[\\[\"\\],-]", "");
                 params.put("s_id",SharedPrefManager.getInstance(getApplicationContext()).getUserId());
@@ -213,8 +215,10 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
         }
 
         if(v == mBtn_start){
-
+            t_idOfCourse = COURSE_NAME_ID.substring(COURSE_NAME_ID.length()-7,COURSE_NAME_ID.length()-2);
             Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
+            intent.putExtra("EXTRA_TEACHER_ID", t_idOfCourse);
+            intent.putExtra("EXTRA_STUDENT_COURSE_NAME_ID",COURSE_NAME_ID);
             startActivity(intent);
 
         }

@@ -11,13 +11,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.android.mepo.LoginActivity.IsStudent;
 import static com.example.android.mepo.StudentActivity.getList_of_student_courses_names;
 import static com.example.android.mepo.StudentCourseActivity.IsStudentCourseActivity;
+import static com.example.android.mepo.TeacherCourseActivity.IsTeacherCourseActivity;
 import static com.example.android.mepo.StudentCoursePrevLecActivity.getListOfStudentCourseLectures;
 import static com.example.android.mepo.TeacherActivity.getList_of_teacher_courses_names;
-import static com.example.android.mepo.TeacherCourseActivity.IsTeacherCourseActivity;
 import static com.example.android.mepo.TeacherCoursePrevLecActivity.IsTeacherLecturesActivity;
 import static com.example.android.mepo.TeacherCoursePrevLecActivity.getListOfTeacherCourseLectures;
 import static com.example.android.mepo.TeacherCoursePrevLecDetailsActivity.getListOfStudentInLectures;

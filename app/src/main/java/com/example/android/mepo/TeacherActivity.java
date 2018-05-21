@@ -1,21 +1,32 @@
 package com.example.android.mepo;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+//import static com.example.android.mepo.StudentCourseActivity.IsCourse;
 import static com.example.android.mepo.TeacherCourseActivity.IsTeacherCourseActivity;
 import static com.example.android.mepo.TeacherCoursePrevLecActivity.IsTeacherLecturesActivity;
-
-//import static com.example.android.mepo.StudentCourseActivity.IsCourse;
 
 
 public class TeacherActivity extends AppCompatActivity
@@ -27,9 +38,10 @@ public class TeacherActivity extends AppCompatActivity
     //References to RecyclerView and Adapter
     private RecyclerViewAdapter mAdapter;
     private RecyclerView mNumbersListRecycler;
-    private ProgressBar mProgressBar;
+    //private ProgressBar mProgressBar;
     private Toast mToast;
     public static ArrayList<String> list_of_courses_names_id = new ArrayList<String>();
+    private int courseIndex;
 
 
 
@@ -68,6 +80,8 @@ public class TeacherActivity extends AppCompatActivity
 
         mNumbersListRecycler = findViewById(R.id.rv_teacherCourses);
 
+        //mProgressBar.findViewById(R.id.pb_loading_indicator);
+
         IsTeacherCourseActivity = null;
         IsTeacherLecturesActivity = null;
 
@@ -89,6 +103,93 @@ public class TeacherActivity extends AppCompatActivity
 
 
 
+    public void studentIdsPerCourse(int clickedItemIndex){
+        courseIndex = clickedItemIndex;
+        //mProgressBar.setVisibility(View.VISIBLE);
+
+
+        StringRequest stringRequest = new StringRequest
+                (Request.Method.POST, Constants.URL_T_ACTIVITY,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                //mProgressBar.setVisibility(View.INVISIBLE);
+                                try{
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    //If there is no error message in the JSON string
+                                    if(!jsonObject.getBoolean("error")){
+
+                                        JSONArray students_in_course_arr;
+                                        students_in_course_arr = jsonObject.getJSONArray("s_ids");
+                                        System.out.println(students_in_course_arr);
+                                        ArrayList<String> list_of_students_in_course = new ArrayList<String>();
+                                        if (students_in_course_arr != null) {
+                                            for (int i = 0; i < students_in_course_arr.length(); i++) {
+                                                list_of_students_in_course.add(students_in_course_arr.getString(i));
+                                            }
+
+                                        }else{
+                                            System.out.println("lectures_arr = null!!!!!!!!!!!!");
+                                        }
+
+                                        //for the Recyclerview adapter
+                                        IsTeacherLecturesActivity = "yes";
+                                        Intent intent = new Intent(getApplicationContext(), TeacherCourseActivity.class);
+                                        intent.putExtra("EXTRA_TEACHER_COURSE_NAME_ID", list_of_courses_names_id.get(courseIndex).toString());
+
+                                        intent.putExtra("EXTRA_STUDENTS_IN_COURSE_SIZE", list_of_students_in_course.size());
+                                        System.out.println("TeacherActivity list_of_students_in_course " + list_of_students_in_course);
+                                        intent.putExtra("EXTRA_STUDENTS_IN_COURSE", list_of_students_in_course);
+                                        startActivity(intent);
+
+                                    }else{
+                                        Toast.makeText(
+                                                getApplicationContext(),
+                                                jsonObject.getString("message"),
+                                                Toast.LENGTH_LONG
+                                        ).show();
+                                    }
+
+                                } catch (JSONException e){
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                //mProgressBar.setVisibility(View.INVISIBLE);
+                                Toast.makeText(
+                                        getApplicationContext(),
+                                        "Connection failed, Please try again",
+                                        Toast.LENGTH_LONG
+                                ).show();
+                                startActivity(new Intent(getApplicationContext(), TeacherCourseActivity.class));
+                                finish();
+                            }
+                        }){
+
+            //Push parameters to Request.Method.POST
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                String c_id = list_of_courses_names_id.get(courseIndex).toString();
+                c_id = c_id.replaceAll("[A-z]","");
+                c_id = c_id.replaceAll("[\\[\"\\],-]", "");
+                params.put("c_id",c_id);
+                return params;
+            }
+        };
+
+        //Making a connection by singleton class to the database with stringRequest
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+
+
+    }
+
+
+
 
 
 
@@ -103,11 +204,8 @@ public class TeacherActivity extends AppCompatActivity
         //String toastMessage = list_of_courses_names.get(clickedItemIndex).toString().replaceAll("[\\[\"\\],-]","") + " clicked.";
         //mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
         //mToast.show();
+        studentIdsPerCourse(clickedItemIndex);
 
-        Intent intent = new Intent(getApplicationContext(), TeacherCourseActivity.class);
-        intent.putExtra("EXTRA_TEACHER_COURSE_NAME_ID", list_of_courses_names_id.get(clickedItemIndex).toString());
-
-        startActivity(intent);
     }
 
 
