@@ -1,15 +1,18 @@
 package com.example.android.mepo;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.example.android.mepo.StudentCourseActivity.IsStudentCourseActivity;
 
@@ -60,7 +63,6 @@ public class StudentActivity extends AppCompatActivity
 
         STUDENT_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_STUDENT_COURSES_SIZE",0);
 
-
         list_of_courses_names = getIntent().getStringArrayListExtra("EXTRA_STUDENT_COURSES_NAME");
         mNumbersListRecycler = findViewById(R.id.rv_studentCourses);
 
@@ -89,11 +91,8 @@ public class StudentActivity extends AppCompatActivity
     @Override
     public void onListItemClick(int clickedItemIndex) {
 
-
-
         Intent intent = new Intent(getApplicationContext(), StudentCourseActivity.class);
         intent.putExtra("EXTRA_STUDENT_COURSE_NAME_ID", list_of_courses_names.get(clickedItemIndex).toString());
-
         startActivity(intent);
     }
 
