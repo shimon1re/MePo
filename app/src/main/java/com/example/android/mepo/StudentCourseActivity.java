@@ -216,6 +216,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
             t_idOfCourse = COURSE_NAME_ID.substring(COURSE_NAME_ID.length()-7,COURSE_NAME_ID.length()-2);
             Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
             intent.putExtra("EXTRA_TEACHER_ID", t_idOfCourse);
+            intent.putExtra("EXTRA_STUDENT_COURSE_NAME_ID",COURSE_NAME_ID);
             startActivity(intent);
 
         }

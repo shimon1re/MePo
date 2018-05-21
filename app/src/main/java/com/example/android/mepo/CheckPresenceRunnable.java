@@ -11,6 +11,7 @@ public class CheckPresenceRunnable extends TimerTask implements Runnable {
     Timer timer;
     String strDate;
     MyWiFiActivity mMyWifiTaskActivity;
+    int afterFiveHouers = 0, state = 1;
 
     CheckPresenceRunnable(MyWiFiActivity sMyWiFiActivity){
         mMyWifiTaskActivity = sMyWiFiActivity;
@@ -20,11 +21,16 @@ public class CheckPresenceRunnable extends TimerTask implements Runnable {
 
         timer = new Timer();
         //timer.schedule(this, 1000); //1 second
-        // לשנות בין סטודנט למרצה, סטודנט 5 שניות, מרצה כמה דקות
+        // לשנות למרצה, מרצה כמה דקות
         if (mMyWifiTaskActivity.isGroupOwner == true)
             timer.schedule(this, 1000, 5000); //5 second
+
+        //Used for attempts to connect a student
+        //Every 10 seconds he will try to connect again to the lecturer
         else
             timer.schedule(this, 1000, 10000); //10 second
+
+
     }
 
     @Override
@@ -34,11 +40,14 @@ public class CheckPresenceRunnable extends TimerTask implements Runnable {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yy  HH:mm:ss a");
         strDate = simpleDateFormat.format(calendar.getTime());
 
-
+        afterFiveHouers++;
+        //Checks if it has been 5 hours since the start of the lecture so that the group is removed automatically
+        if(afterFiveHouers >=60)
+            state = 2;
 
 
         //After the task is done
-        mMyWifiTaskActivity.handleState(this, 1);
+        mMyWifiTaskActivity.handleState(this, state);
     }
 
     public void cancelTimer(){

@@ -309,6 +309,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
             System.out.println("list_of_students_in_course: " + list_of_students_in_course);
             Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
             intent.putStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE",list_of_students_in_course);
+            intent.putExtra("EXTRA_TEACHER_COURSE_NAME_ID",COURSE_NAME_ID);
             startActivity(intent);
 
         }

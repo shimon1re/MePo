@@ -78,6 +78,7 @@ public class MyWiFiActivity extends AppCompatActivity {
     static boolean studentConnected = false;
     static boolean isGroupOwner;
     String courseT_ID;
+    String c_id;
     ArrayList<String> list_of_students_in_course = new ArrayList<String>();
 
     CheckPresenceRunnable checkPresenceRunnable;
@@ -86,6 +87,7 @@ public class MyWiFiActivity extends AppCompatActivity {
     boolean studentIsConnect = false;
     private  String currentDate, startStrDate, endStrDate;
     private final int TASK_COMPLETE = 1;
+    private final int TASK_TERMINATED = 2;
 
 
     // Defines a Handler object that's attached to the UI thread
@@ -122,8 +124,15 @@ public class MyWiFiActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
                         checkPresenceRunnable.cancelTimer();
                         flag = 0;
-                        checkPresence();
+                        if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null)
+                            checkPresence();
                     }
+                    break;
+
+                case TASK_TERMINATED:
+
+                    Toast.makeText(getApplicationContext(), "Due to inactivity of 5 hours the registration has been discontinued.", Toast.LENGTH_SHORT).show();
+                    btnEnd.performClick();
                     break;
 
                 default:
@@ -162,7 +171,6 @@ public class MyWiFiActivity extends AppCompatActivity {
 
     public void initWork(){
         System.out.println("initWork");
-        courseT_ID =  getIntent().getStringExtra("EXTRA_TEACHER_ID");
         list_of_students_in_course = getIntent().getStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE");
 
         stdStatusCountMap = new HashMap<>();
@@ -181,14 +189,18 @@ public class MyWiFiActivity extends AppCompatActivity {
         btnEnd = findViewById(R.id.endButton);
 
         if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
+            c_id = getIntent().getStringExtra("EXTRA_STUDENT_COURSE_NAME_ID").substring(7,10);
+            //System.out.println("AAAAAAAAAAAAAAAAAAA      " + c_id);
             listView = findViewById(R.id.peerListView);
             isGroupOwner = false;
         }
         if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
+            c_id = getIntent().getStringExtra("EXTRA_TEACHER_COURSE_NAME_ID").substring(7,10);
+            //System.out.println("AAAAAAAAAAAAAAAAAAA      " + c_id);
             grouplistView = findViewById(R.id.peerListView);
             isGroupOwner = true;
         }
-
+        courseT_ID =  getIntent().getStringExtra("EXTRA_TEACHER_ID");
         connectionStatus = findViewById(R.id.connectionStatus);
         read_msg_box = findViewById(R.id.readMsg);
 
@@ -490,7 +502,7 @@ public class MyWiFiActivity extends AppCompatActivity {
 
             Object arglist[] = new Object[3];
             arglist[0] = mChannel;
-            arglist[1] = SharedPrefManager.getInstance(getApplicationContext()).getUserId();
+            arglist[1] = SharedPrefManager.getInstance(getApplicationContext()).getUserId().concat("_" + c_id);
             arglist[2] = new WifiP2pManager.ActionListener() {
 
                 @Override
@@ -535,7 +547,10 @@ public class MyWiFiActivity extends AppCompatActivity {
                 //mHandler.sendMessageAtTime(mHandler.obtainMessage(state), System.currentTimeMillis()+interval);
                 //handler.sendMessageDelayed(msg, interval);
                 break;
-
+            case TASK_TERMINATED:
+                Message msg = mHandler.obtainMessage(state, checkPresenceRunnable);
+                msg.sendToTarget();
+                break;
         }
 
     }
@@ -580,6 +595,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                 numOfCheckBeats = (float)sumOfMinutes / 10; //10(minutes) equal to check interval time
             System.out.println("sumOfMinutes " + sumOfMinutes);
 
+            //call the function that report to DB
             reportStudentsPresence(numOfCheckBeats);
 
         }
@@ -609,6 +625,8 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
+
+
     public ArrayList<String> reportStudentsPresence(float numOfCheckBeats){
 
         String stdInCourse;
@@ -622,7 +640,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                 pass =  (numOfCheckBeats / (float) stdStatusCountMap.get(stdInCourse)[0]);
                 System.out.println("stdInCourse: " + stdInCourse + "  count: " + stdStatusCountMap.get(stdInCourse)[0]);
                 System.out.println("pass" + pass);
-                if( pass > 0.5 && stdStatusCountMap.get(stdInCourse)[0] != 0){
+                if( pass >= 0.5 && stdStatusCountMap.get(stdInCourse)[0] != 0){
                     System.out.println("----------------------------------");
                     System.out.println("stdInCourse: " + stdInCourse + "  count: " + stdStatusCountMap.get(stdInCourse)[0]);
                     System.out.println("pass" + pass);
@@ -637,6 +655,8 @@ public class MyWiFiActivity extends AppCompatActivity {
 
         return reportThisStudentToDB;
     }
+
+
 
 
 
@@ -701,12 +721,21 @@ public class MyWiFiActivity extends AppCompatActivity {
                 /**Initialize a set of found devices for student*/
                 if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
 
+                    String deviceCID, deviceTID;
+
                     for (WifiP2pDevice device : peerList.getDeviceList()) {
                         System.out.println("device founded: " + device.deviceName);
-                        if(device.deviceName.equals(courseT_ID) ) {
+                        deviceTID = device.deviceName.substring(0,5);
+                        deviceCID = device.deviceName.substring(6,9);
+                        System.out.println("deviceTID " + deviceTID + "  deviceCID" + deviceCID);
+                        //System.out.println("courseT_ID founded: " + courseT_ID);
+                        //courseT_ID = courseT_ID.concat("_" + c_id);
+                        //if(device.deviceName.equals(courseT_ID) ) {
+                        if(deviceCID.equals(c_id) && deviceTID.equals(courseT_ID)) {
                             System.out.println("equal");
                             System.out.println("device.isGroupOwner(): " + device.isGroupOwner());
-                            deviceNameArray[0] = device.deviceName;
+                            //deviceNameArray[0] = device.deviceName;
+                            deviceNameArray[0] = deviceTID;
                             deviceArray[0] = device;
 
                             if(studentConnected == false && SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
@@ -759,6 +788,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                     groupDevicesNamesArray = new String[group.getClientList().size()];
 
                     int index = 0;
+                    String deviceSID, deviceCID;
 
                     /**Initialize a set of found devices*/
                     for (WifiP2pDevice device : group.getClientList()) {
@@ -767,9 +797,14 @@ public class MyWiFiActivity extends AppCompatActivity {
                             //System.out.println("list_of_students_in_course.get(i): " + list_of_students_in_course.get(i));
                             String clean = list_of_students_in_course.get(i);
                             clean = clean.replaceAll("[\\[\"\\],-]", "");
-                            if (device.deviceName.equals(clean)) {
+                            deviceSID =device.deviceName.substring(0,5);
+                            deviceCID = device.deviceName.substring(6,9);
+                            System.out.println("deviceSID " + deviceSID + "  deviceCID" + deviceCID);
+                            //if (device.deviceName.equals(clean)) {
+                            if (deviceSID.equals(clean) && deviceCID.equals(c_id)) {
                                 System.out.println("equal");
-                                groupDevicesNamesArray[index] = device.deviceName;
+                                //groupDevicesNamesArray[index] = device.deviceName;
+                                groupDevicesNamesArray[index] = deviceSID;
                                 groupDeviceArray[index] = device;
                                 index++;
                                 System.out.println("index " + index);
