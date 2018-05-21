@@ -1,15 +1,31 @@
 package com.example.android.mepo;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class StudentActivity extends AppCompatActivity {
+import java.util.ArrayList;
 
-    private TextView mtv_id, mtv_fName, mtv_lName, mtv_email, mtv_dep;
+import static com.example.android.mepo.StudentCourseActivity.IsStudentCourseActivity;
+
+
+public class StudentActivity extends AppCompatActivity
+        implements RecyclerViewAdapter.ListItemClickListener{
+
+
+    public int STUDENT_NUM_LIST_ITEMS ;
+
+    private RecyclerViewAdapter mAdapter;
+    private RecyclerView mNumbersListRecycler;
+    private TextView mTvUserWelcome;
+    public static ArrayList<String> list_of_courses_names = new ArrayList<String>();;
+
+
 
 
     @Override
@@ -17,26 +33,73 @@ public class StudentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
 
+
+        /*Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        String formattedDate = df.format(c);*/
+
+        initComponnents();
+
+
         //check if user logged in or not.
         if(!SharedPrefManager.getInstance(this).isLoggedIn()){
             finish();
             startActivity(new Intent(this, LoginActivity.class));
         }
-
-        mtv_id = findViewById(R.id.tv_id);
-        mtv_fName = findViewById(R.id.tv_firstName);
-        mtv_lName = findViewById(R.id.tv_lastName);
-        mtv_email = findViewById(R.id.tv_email);
-        mtv_dep = findViewById(R.id.tv_department);
+    }
 
 
-        mtv_id.setText(SharedPrefManager.getInstance(this).getUserId());
-        mtv_fName.setText(SharedPrefManager.getInstance(this).getUserFName());
-        mtv_lName.setText(SharedPrefManager.getInstance(this).getUserLName());
-        mtv_email.setText(SharedPrefManager.getInstance(this).getUserEmail());
-        mtv_dep.setText(SharedPrefManager.getInstance(this).getUserDepartment());
+
+
+
+
+    public void initComponnents(){
+
+        mTvUserWelcome = findViewById(R.id.tv_hello_user);
+        mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
+
+        STUDENT_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_STUDENT_COURSES_SIZE",0);
+
+
+        list_of_courses_names = getIntent().getStringArrayListExtra("EXTRA_STUDENT_COURSES_NAME");
+        mNumbersListRecycler = findViewById(R.id.rv_studentCourses);
+
+        IsStudentCourseActivity = null;
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mNumbersListRecycler.setLayoutManager(layoutManager);
+        mNumbersListRecycler.setHasFixedSize(true);
+        //Initializing the RecyclerViewAdapter class
+        mAdapter = new RecyclerViewAdapter(STUDENT_NUM_LIST_ITEMS, this);
+        mNumbersListRecycler.setAdapter(mAdapter);
 
     }
+
+
+
+    public static ArrayList<String> getList_of_student_courses_names(){
+        return list_of_courses_names;
+    }
+
+
+
+
+
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
+
+
+
+        Intent intent = new Intent(getApplicationContext(), StudentCourseActivity.class);
+        intent.putExtra("EXTRA_STUDENT_COURSE_NAME_ID", list_of_courses_names.get(clickedItemIndex).toString());
+
+        startActivity(intent);
+    }
+
+
+
+
 
     //Responsible for the logout button
     @Override
@@ -44,6 +107,11 @@ public class StudentActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
+
+
+
+
+
 
     //Responsible for the menu buttons, what each button does
     @Override
@@ -57,4 +125,14 @@ public class StudentActivity extends AppCompatActivity {
         }
         return true;
     }
+
+
+
+
+
+
+
+
+
+
 }

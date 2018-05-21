@@ -1,8 +1,8 @@
 package com.example.android.mepo;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -12,25 +12,20 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import static com.example.android.mepo.TeacherCourseActivity.IsTeacherCourseActivity;
-import static com.example.android.mepo.TeacherCoursePrevLecActivity.IsTeacherLecturesActivity;
 
-//import static com.example.android.mepo.StudentCourseActivity.IsCourse;
-
-
-public class TeacherActivity extends AppCompatActivity
+public class StudentCoursePrevLecActivity extends AppCompatActivity
         implements RecyclerViewAdapter.ListItemClickListener{
 
 
-    public int TEACHER_NUM_LIST_ITEMS ;
+    public int COURSE_NUM_LIST_ITEMS ;
 
     //References to RecyclerView and Adapter
     private RecyclerViewAdapter mAdapter;
     private RecyclerView mNumbersListRecycler;
     private ProgressBar mProgressBar;
     private Toast mToast;
-    public static ArrayList<String> list_of_courses_names_id = new ArrayList<String>();
-
+    //private TextView mTvUserWelcome;
+    public static ArrayList<String> list_of_lectures = new ArrayList<String>();;
 
 
 
@@ -38,13 +33,38 @@ public class TeacherActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_teacher);
+        setContentView(R.layout.activity_student_course_prevlec);
 
-        //mProgressBar = findViewById(R.id.pb_loading_indicator);
+        mProgressBar = findViewById(R.id.pb_loading_indicator);
 
-        initComponnents();
+        /*Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        String formattedDate = df.format(c);*/
 
 
+        //mTvUserWelcome = findViewById(R.id.tv_hello_user);
+        //mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
+
+
+        COURSE_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_COURSE_LECTURES_SIZE",0);
+        Bundle extras = getIntent().getExtras();
+
+
+        Intent intent = new Intent(getApplicationContext(), TeacherCoursePrevLecDetailsActivity.class);
+
+
+        list_of_lectures = getIntent().getStringArrayListExtra("EXTRA_COURSE_LECTURES");
+        System.out.println(list_of_lectures);
+
+
+        mNumbersListRecycler = findViewById(R.id.rv_courseLectures);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mNumbersListRecycler.setLayoutManager(layoutManager);
+        mNumbersListRecycler.setHasFixedSize(true);
+        //Initializing the RecyclerViewAdapter class
+        mAdapter = new RecyclerViewAdapter(COURSE_NUM_LIST_ITEMS, this);
+        mNumbersListRecycler.setAdapter(mAdapter);
 
 
         //check if user logged in or not.
@@ -52,6 +72,8 @@ public class TeacherActivity extends AppCompatActivity
             finish();
             startActivity(new Intent(this, LoginActivity.class));
         }
+
+
     }
 
 
@@ -60,31 +82,8 @@ public class TeacherActivity extends AppCompatActivity
 
 
 
-    public void initComponnents(){
-
-        TEACHER_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_TEACHER_COURSES_SIZE",0);
-
-        list_of_courses_names_id = getIntent().getStringArrayListExtra("EXTRA_TEACHER_COURSES_NAME_ID");
-
-        mNumbersListRecycler = findViewById(R.id.rv_teacherCourses);
-
-        IsTeacherCourseActivity = null;
-        IsTeacherLecturesActivity = null;
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mNumbersListRecycler.setLayoutManager(layoutManager);
-        mNumbersListRecycler.setHasFixedSize(true);
-        //Initializing the RecyclerViewAdapter class
-        mAdapter = new RecyclerViewAdapter(TEACHER_NUM_LIST_ITEMS, this);
-        mNumbersListRecycler.setAdapter(mAdapter);
-
-    }
-
-
-
-
-    public static ArrayList<String> getList_of_teacher_courses_names(){
-        return list_of_courses_names_id;
+    public static ArrayList<String> getListOfStudentCourseLectures(){
+        return list_of_lectures;
     }
 
 
@@ -102,13 +101,12 @@ public class TeacherActivity extends AppCompatActivity
         //and open them in a new screen.
         //String toastMessage = list_of_courses_names.get(clickedItemIndex).toString().replaceAll("[\\[\"\\],-]","") + " clicked.";
         //mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+
         //mToast.show();
-
-        Intent intent = new Intent(getApplicationContext(), TeacherCourseActivity.class);
-        intent.putExtra("EXTRA_TEACHER_COURSE_NAME_ID", list_of_courses_names_id.get(clickedItemIndex).toString());
-
-        startActivity(intent);
     }
+
+
+
 
 
 
@@ -120,8 +118,6 @@ public class TeacherActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
-
-
 
 
 
@@ -138,10 +134,6 @@ public class TeacherActivity extends AppCompatActivity
         }
         return true;
     }
-
-
-
-
 
 
 
