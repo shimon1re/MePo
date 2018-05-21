@@ -92,6 +92,15 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
             mToast.cancel();
         }
         String S_ID = list_of_students.get(clickedItemIndex).substring(2,7);
+        
+        Intent intent = new Intent(getApplicationContext(), changeUserStatus.class);
+-        //Get AND Send the list of course to the next Activity
+ 
+ 
+-        intent.putExtra("COURSE_LIST", course_list);
+-        intent.putExtra("S_ID", S_ID);
+-        intent.putExtra("L_ID", l_id);
+-        startActivity(intent);
     }
 
 
