@@ -25,8 +25,9 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
     private ProgressBar mProgressBar;
     private Toast mToast;
     //private TextView mTvUserWelcome;
-    public static ArrayList<String> list_of_students = new ArrayList<String>();;
-
+    public static ArrayList<String> list_of_students = new ArrayList<String>();
+    public static ArrayList<String> course_list = new ArrayList<String>();
+    public String l_id;
 
 
 
