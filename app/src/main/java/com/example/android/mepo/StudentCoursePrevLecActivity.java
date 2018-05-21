@@ -47,6 +47,11 @@ public class StudentCoursePrevLecActivity extends AppCompatActivity
 
 
         COURSE_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_COURSE_LECTURES_SIZE",0);
+        Bundle extras = getIntent().getExtras();
+
+
+        Intent intent = new Intent(getApplicationContext(), TeacherCoursePrevLecDetailsActivity.class);
+
 
         list_of_lectures = getIntent().getStringArrayListExtra("EXTRA_COURSE_LECTURES");
         System.out.println(list_of_lectures);
@@ -67,6 +72,8 @@ public class StudentCoursePrevLecActivity extends AppCompatActivity
             finish();
             startActivity(new Intent(this, LoginActivity.class));
         }
+
+
     }
 
 

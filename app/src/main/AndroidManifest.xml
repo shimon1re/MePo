@@ -3,12 +3,15 @@
     package="com.example.android.mepo">
 
     <uses-sdk android:minSdkVersion="14" />
+
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -25,6 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".StudentCourseActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".TeacherActivity"
@@ -41,6 +45,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".MyWiFiActivity"
             android:screenOrientation="portrait"></activity>
+
     </application>
 
 </manifest>

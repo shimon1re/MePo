@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.widget.Toast;
-import android.net.wifi.p2p.WifiP2pManager.Channel;
 
 import static com.example.android.mepo.MyWiFiActivity.isGroupOwner;
 
@@ -21,6 +20,11 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager.Channel mChannel;
     private MyWiFiActivity mActivity;
 
+
+
+
+
+
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel,
                                        MyWiFiActivity activity) {
         super();
@@ -29,9 +33,17 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         this.mActivity = activity;
     }
 
+
+
+
+
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+
+
 
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
             // Check to see if Wi-Fi is enabled and notify appropriate activity

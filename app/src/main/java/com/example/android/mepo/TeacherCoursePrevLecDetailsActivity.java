@@ -1,8 +1,8 @@
 package com.example.android.mepo;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -19,6 +19,8 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
 
     public int STUDENTS_NUM_LIST_ITEMS ;
 
+
+
     //References to RecyclerView and Adapter
     private RecyclerViewAdapter mAdapter;
     private RecyclerView mNumbersListRecycler;
@@ -26,6 +28,9 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
     private Toast mToast;
     //private TextView mTvUserWelcome;
     public static ArrayList<String> list_of_students = new ArrayList<String>();;
+    public static ArrayList<String> course_list = new ArrayList<String>();
+    public String l_id;
+
 
 
 
@@ -44,11 +49,13 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
 
         //mTvUserWelcome = findViewById(R.id.tv_hello_user);
         //mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
-
-
+        Bundle extras = getIntent().getExtras();
         STUDENTS_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_LECTURES_DETAILS_SIZE",0);
+        l_id = getIntent().getStringExtra("l_id");
 
         list_of_students = getIntent().getStringArrayListExtra("EXTRA_LECTURES_DETAILS");
+        course_list  = getIntent().getStringArrayListExtra("COURSE_LIST");
+
         System.out.println("check2" + list_of_students);
 
 
@@ -90,20 +97,22 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
         if (mToast != null) {
             mToast.cancel();
         }
-        //Here we have to load the list of lectures that belong to the specific course,
-        //and open them in a new screen.
-        //String toastMessage = list_of_courses_names.get(clickedItemIndex).toString().replaceAll("[\\[\"\\],-]","") + " clicked.";
-        //mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+         // Get the student id
+        // CHANGE IT TO THE NUMER OF THE REAL STUDENT ID
+        String S_ID = list_of_students.get(clickedItemIndex).substring(2,7);
 
-        //mToast.show();
+        //System.out.println(course_list);
+        Intent intent = new Intent(getApplicationContext(), changeUserStatus.class);
+        //Get AND Send the list of course to the next Activity
+
+        intent.putExtra("COURSE_LIST", course_list);
+        intent.putExtra("S_ID", S_ID);
+        intent.putExtra("L_ID", l_id);
+        startActivity(intent);
+
+
+
     }
-
-
-
-
-
-
-
 
     //Responsible for the logout button
     @Override
@@ -111,9 +120,6 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
-
-
-
 
     //Responsible for the menu buttons, what each button does
     @Override
