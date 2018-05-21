@@ -48,7 +48,7 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
         Bundle extras = getIntent().getExtras();
 
         STUDENTS_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_LECTURES_DETAILS_SIZE",0);
-
+        l_id = getIntent().getStringExtra("l_id");
         list_of_students = getIntent().getStringArrayListExtra("EXTRA_LECTURES_DETAILS");
         System.out.println("check2" + list_of_students);
 
