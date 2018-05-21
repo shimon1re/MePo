@@ -151,7 +151,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
                             }
                         }) {
 
-            //Push parameters to Request.Method.POST
+            //Push parameters to Request.Method.POST now
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
