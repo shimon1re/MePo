@@ -51,7 +51,7 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
         l_id = getIntent().getStringExtra("l_id");
         list_of_students = getIntent().getStringArrayListExtra("EXTRA_LECTURES_DETAILS");
         System.out.println("check2" + list_of_students);
-
+        course_list  = getIntent().getStringArrayListExtra("COURSE_LIST");
 
         mNumbersListRecycler = findViewById(R.id.rv_studentsInLecture);
 
