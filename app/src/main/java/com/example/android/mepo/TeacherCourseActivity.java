@@ -307,7 +307,6 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
             //strDate = simpleDateFormat.format(calendar.getTime());
             time = (Calendar.getInstance().getTime());
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yy  HH:mm:ss a");
-            //dateAndTime = time.toString();
             dateAndTime = simpleDateFormat.format(time.getTime());
             String temp_c_id = COURSE_NAME_ID.replaceAll("[A-z]", "");
             c_id = temp_c_id.replaceAll("[\\[\"\\],-]", "");
