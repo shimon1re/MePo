@@ -307,6 +307,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
             String temp_c_id = COURSE_NAME_ID.replaceAll("[A-z]", "");
             c_id = temp_c_id.replaceAll("[\\[\"\\],-]", "");
             t_id = SharedPrefManager.getInstance(getApplicationContext()).getUserId();
+            System.out.println(dateAndTime + " " + c_id+ " " + t_id+ " " + intMaxLectureNumber);
             addLecture();// activate and write inset to DB function via post requests
             Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
             intent.putStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE",list_of_students_in_course);

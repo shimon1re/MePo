@@ -45,7 +45,9 @@
         <activity android:name=".TeacherCoursePrevLecDetailsActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".MyWiFiActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ChangeUserStatus"
+            android:screenOrientation="portrait"/>
 
     </application>
 

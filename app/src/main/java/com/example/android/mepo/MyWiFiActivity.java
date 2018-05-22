@@ -1,6 +1,6 @@
 package com.example.android.mepo;
 
-import android.app.ListActivity;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -11,7 +11,6 @@ import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.WifiManager;
-import android.net.wifi.p2p.nsd.WifiP2pServiceInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -19,29 +18,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-//import java.nio.channels.Channel;
+
 
 
 
@@ -146,12 +135,6 @@ public class MyWiFiActivity extends AppCompatActivity {
     };
 
 
-    //static final int MESSAGE_READ = 1;
-    //EditText writeMsg;
-    //ServerClass serverClass;
-    //ClientClass clientClass;
-    //SendReceive sendReceive;
-    //int oneTimeServer = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -236,7 +219,7 @@ public class MyWiFiActivity extends AppCompatActivity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         changeDeviceName();
-        //btnDiscover.performClick();
+        btnDiscover.performClick();
     }
 
 
