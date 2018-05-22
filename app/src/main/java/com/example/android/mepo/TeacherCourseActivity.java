@@ -75,7 +75,9 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         COURSE_NAME_ID = getIntent().getStringExtra("EXTRA_TEACHER_COURSE_NAME_ID");
-
+        c_id = COURSE_NAME_ID;
+        c_id = c_id.replaceAll("[A-z]", "");
+        c_id = c_id.replaceAll("[\\[\"\\],-]", "");
         list_of_students_in_course = getIntent().getStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE");
 
 
@@ -163,11 +165,9 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                COURSE_NAME_ID = COURSE_NAME_ID.replaceAll("[A-z]", "");
-                COURSE_NAME_ID = COURSE_NAME_ID.replaceAll("[\\[\"\\],-]", "");
 
                 params.put("t_id", SharedPrefManager.getInstance(getApplicationContext()).getUserId());
-                params.put("c_id", COURSE_NAME_ID);
+                params.put("c_id", c_id);
                 //params.put("t_password",SharedPrefManager.getInstance(getApplicationContext()).getUserPassword());
                 return params;
             }
@@ -229,11 +229,8 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                COURSE_NAME_ID = COURSE_NAME_ID.replaceAll("[A-z]", "");
-                COURSE_NAME_ID = COURSE_NAME_ID.replaceAll("[\\[\"\\],-]", "");
 
-
-                params.put("c_id", COURSE_NAME_ID);
+                params.put("c_id", c_id);
                 return params;
             }
         };
@@ -306,10 +303,9 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
             //Calendar calendar = Calendar.getInstance();
             //strDate = simpleDateFormat.format(calendar.getTime());
             time = (Calendar.getInstance().getTime());
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yy  HH:mm:ss a");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yy  HH:mm:ss ");
             dateAndTime = simpleDateFormat.format(time.getTime());
-            String temp_c_id = COURSE_NAME_ID.replaceAll("[A-z]", "");
-            c_id = temp_c_id.replaceAll("[\\[\"\\],-]", "");
+
             t_id = SharedPrefManager.getInstance(getApplicationContext()).getUserId();
             System.out.println(dateAndTime + " " + c_id+ " " + t_id+ " " + intMaxLectureNumber);
             addLecture();// activate and write inset to DB function via post requests

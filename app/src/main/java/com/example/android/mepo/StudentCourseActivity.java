@@ -30,7 +30,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
     private Button mBtn_prev_lectures,mBtn_start;
     private ProgressBar mProgressBar;
     private String COURSE_NAME_ID;
-    private String t_idOfCourse;
+    private String t_idOfCourse, c_id;
 
     public static String IsStudentCourseActivity;
 
@@ -73,6 +73,8 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         COURSE_NAME_ID =  getIntent().getStringExtra("EXTRA_STUDENT_COURSE_NAME_ID");
+        c_id = COURSE_NAME_ID;
+        t_idOfCourse = COURSE_NAME_ID.substring(COURSE_NAME_ID.length()-7,COURSE_NAME_ID.length()-2);
     }
 
 
@@ -154,11 +156,11 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                COURSE_NAME_ID = COURSE_NAME_ID.substring(1,COURSE_NAME_ID.length()-7);
-                COURSE_NAME_ID = COURSE_NAME_ID.replaceAll("[A-z]","");
-                COURSE_NAME_ID = COURSE_NAME_ID.replaceAll("[\\[\"\\],-]", "");
+                c_id = c_id.substring(1,c_id.length()-7);
+                c_id = c_id.replaceAll("[A-z]","");
+                c_id = c_id.replaceAll("[\\[\"\\],-]", "");
                 params.put("s_id",SharedPrefManager.getInstance(getApplicationContext()).getUserId());
-                params.put("c_id",COURSE_NAME_ID);
+                params.put("c_id",c_id);
                 return params;
             }
         };
@@ -215,7 +217,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
         }
 
         if(v == mBtn_start){
-            t_idOfCourse = COURSE_NAME_ID.substring(COURSE_NAME_ID.length()-7,COURSE_NAME_ID.length()-2);
+
             Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
             intent.putExtra("EXTRA_TEACHER_ID", t_idOfCourse);
             intent.putExtra("EXTRA_STUDENT_COURSE_NAME_ID",COURSE_NAME_ID);
