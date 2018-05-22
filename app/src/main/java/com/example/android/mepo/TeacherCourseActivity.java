@@ -290,8 +290,8 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
             });
             //sendCourseReport();
         }
-
-        if (v == mBtn_start) {// =-====Add new lecture======
+        // =-====Add new lecture======
+        if (v == mBtn_start) {
             getMaxLecture();
             time = (Calendar.getInstance().getTime());
             dateAndTime = time.toString();
