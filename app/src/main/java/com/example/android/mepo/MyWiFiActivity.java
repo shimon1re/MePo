@@ -545,44 +545,45 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
-    public void checkPresence(){
+    public void checkPresence() {
 
-        String stdInCourse ;
+        String stdInCourse;
         int startHouer, startMin, endHouer, endMin, subHouers, subMinutes,
                 sumOfMinutes = 0;
         float numOfCheckBeats = 0;
 
+        if (startStrDate != null) {
+            //זמני עד שאסיים לבדוק את החישוב...ואז אעביר לשעות ודקות
+            //startHouer = Integer.parseInt(startStrDate.substring(10,12));
+            //startMin = Integer.parseInt(startStrDate.substring(13,15));
+            startHouer = Integer.parseInt(startStrDate.substring(13, 15));
+            startMin = Integer.parseInt(startStrDate.substring(16, 18));
+            if (endStrDate != null) {
+                //endHouer = Integer.parseInt(endStrDate.substring(10, 12));
+                //endMin = Integer.parseInt(endStrDate.substring(13, 15));
+                endHouer = Integer.parseInt(endStrDate.substring(13, 15));
+                endMin = Integer.parseInt(endStrDate.substring(16, 18));
+                System.out.println("startHouer " + startHouer + "   startMin " + startMin);
+                System.out.println("endHouer " + endHouer + "   endMin " + endMin);
+                subHouers = endHouer - startHouer;
+                if (subHouers < 0) {
+                    subHouers = 24 + (subHouers);
+                }
+                if (subHouers > 0)
+                    sumOfMinutes = (--subHouers) * 60;
+                subMinutes = endMin - startMin;
+                if (subMinutes <= 0) {
+                    subMinutes = 60 + (subMinutes);
+                }
+                sumOfMinutes = sumOfMinutes + subMinutes;
+                if (sumOfMinutes > 0)
+                    numOfCheckBeats = (float) sumOfMinutes / 10; //10(minutes) equal to check interval time
+                System.out.println("sumOfMinutes " + sumOfMinutes);
 
-        //זמני עד שאסיים לבדוק את החישוב...ואז אעביר לשעות ודקות
-        //startHouer = Integer.parseInt(startStrDate.substring(10,12));
-        //startMin = Integer.parseInt(startStrDate.substring(13,15));
-        startHouer = Integer.parseInt(startStrDate.substring(13,15));
-        startMin = Integer.parseInt(startStrDate.substring(16,18));
-        if(endStrDate != null) {
-            //endHouer = Integer.parseInt(endStrDate.substring(10, 12));
-            //endMin = Integer.parseInt(endStrDate.substring(13, 15));
-            endHouer = Integer.parseInt(endStrDate.substring(13, 15));
-            endMin = Integer.parseInt(endStrDate.substring(16, 18));
-            System.out.println("startHouer " + startHouer + "   startMin " + startMin);
-            System.out.println("endHouer " + endHouer + "   endMin " + endMin);
-            subHouers = endHouer - startHouer;
-            if(subHouers < 0) {
-                subHouers = 24 + (subHouers);
+                //call the function that report to DB
+                reportStudentsPresence(numOfCheckBeats);
+
             }
-            if(subHouers > 0)
-                sumOfMinutes = (--subHouers) * 60;
-            subMinutes = endMin - startMin;
-            if(subMinutes <= 0 ){
-                subMinutes = 60 + (subMinutes);
-            }
-            sumOfMinutes = sumOfMinutes + subMinutes;
-            if(sumOfMinutes > 0)
-                numOfCheckBeats = (float)sumOfMinutes / 10; //10(minutes) equal to check interval time
-            System.out.println("sumOfMinutes " + sumOfMinutes);
-
-            //call the function that report to DB
-            reportStudentsPresence(numOfCheckBeats);
-
         }
 
 
