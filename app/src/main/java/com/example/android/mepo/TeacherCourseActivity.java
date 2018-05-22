@@ -178,6 +178,8 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
     }
 
 
+
+
     public void sendCourseReport() {
         mProgressBar.setVisibility(View.VISIBLE);
 
@@ -188,7 +190,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
                             public void onResponse(String response) {
 
                                 mProgressBar.setVisibility(View.INVISIBLE);
-                                try {
+                                /*try {
                                     JSONObject jsonObject = new JSONObject(response);
                                     //If there is no error message in the JSON string
                                     if (!jsonObject.getBoolean("error")) {
@@ -208,7 +210,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                }
+                                }*/
                             }
                         },
                         new Response.ErrorListener() {
@@ -238,6 +240,9 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
         //Making a connection by singleton class to the database with stringRequest
         RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
     }
+
+
+
 
 
     //Responsible for the logout button
@@ -281,7 +286,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
             mBtnOk.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //sendCourseReport();
+                    sendCourseReport();
                     Toast.makeText(getApplicationContext(), "The report has been sent to the department",
                             Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
@@ -299,20 +304,14 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
 
 
         if (v == mBtn_start) {// =-====Add new lecture======
-            getMaxLecture();
-            //Calendar calendar = Calendar.getInstance();
-            //strDate = simpleDateFormat.format(calendar.getTime());
-            time = (Calendar.getInstance().getTime());
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yy  HH:mm:ss ");
-            dateAndTime = simpleDateFormat.format(time.getTime());
 
-            t_id = SharedPrefManager.getInstance(getApplicationContext()).getUserId();
-            System.out.println(dateAndTime + " " + c_id+ " " + t_id+ " " + intMaxLectureNumber);
-            addLecture();// activate and write inset to DB function via post requests
-            Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
-            intent.putStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE",list_of_students_in_course);
-            intent.putExtra("EXTRA_TEACHER_COURSE_NAME_ID",COURSE_NAME_ID);
-            startActivity(intent);
+            getMaxLecture();
+
+
+
+
+
+
 
         }
     }
@@ -336,7 +335,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
                                 mProgressBar.setVisibility(View.INVISIBLE);
                                 try {
                                     JSONObject jsonObject = new JSONObject(response);
-                                    //If there is no error message in the JSON string
+
                                     if (!jsonObject.getBoolean("error")) {
                                         maxLectureNumber= jsonObject.toString();
                                         maxLectureNumber =  maxLectureNumber.replaceAll("[^\\d.]", "");
@@ -344,9 +343,14 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
                                         intMaxLectureNumber = intMaxLectureNumber+1;
                                         System.out.println("===="+intMaxLectureNumber);
 
-
                                         IsTeacherCourseActivity = "yes";
 
+
+                                        Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
+                                        intent.putStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE",list_of_students_in_course);
+                                        intent.putExtra("EXTRA_TEACHER_COURSE_NAME_ID",COURSE_NAME_ID);
+                                        intent.putExtra("EXTRA_LECTURE_NUMBER",intMaxLectureNumber);
+                                        startActivity(intent);
 
 
 
@@ -395,69 +399,5 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
     }
 
 
-    public void addLecture() {
-
-        mProgressBar.setVisibility(View.VISIBLE);
-
-
-        StringRequest stringRequest = new StringRequest
-                (Request.Method.POST, Constants.URL_T_ACTIVITY,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-
-                                mProgressBar.setVisibility(View.INVISIBLE);
-                                try {
-                                    JSONObject jsonObject = new JSONObject(response);
-                                    //If there is no error message in the JSON string
-                                    if (!jsonObject.getBoolean("error")) {
-
-                                    // NO NEED TO GET JASON ERROR
-
-
-                                    } else {
-                                        Toast.makeText(
-                                                getApplicationContext(),
-                                                jsonObject.getString("message"),
-                                                Toast.LENGTH_LONG
-                                        ).show();
-                                    }
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                mProgressBar.setVisibility(View.INVISIBLE);
-                                Toast.makeText(
-                                        getApplicationContext(),
-                                        "Connection failed, Please try again",
-                                        Toast.LENGTH_LONG
-                                ).show();
-
-                            }
-                        }) {
-
-            //Push parameters to Request.Method.POST
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-
-                params.put("dateAndTime", dateAndTime);
-                params.put("c_id", c_id);
-                params.put("t_id", t_id);
-                params.put("l_id", String.valueOf(intMaxLectureNumber));
-
-                return params;
-            }
-        };
-
-        //Making a connection by singleton class to the database with stringRequest
-        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
-
-    }
 
 }

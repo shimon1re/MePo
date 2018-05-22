@@ -3,6 +3,7 @@ package com.example.android.mepo;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -14,19 +15,34 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewDebug;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +84,7 @@ public class MyWiFiActivity extends AppCompatActivity {
     static boolean isGroupOwner;
     String courseT_ID;
     String c_id;
+    int l_number;
     ArrayList<String> list_of_students_in_course = new ArrayList<String>();
 
     CheckPresenceRunnable checkPresenceRunnable;
@@ -77,6 +94,10 @@ public class MyWiFiActivity extends AppCompatActivity {
     private  String currentDate, startStrDate, endStrDate;
     private final int TASK_COMPLETE = 1;
     private final int TASK_TERMINATED = 2;
+
+
+
+
 
 
     // Defines a Handler object that's attached to the UI thread
@@ -136,6 +157,8 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -178,8 +201,10 @@ public class MyWiFiActivity extends AppCompatActivity {
             isGroupOwner = false;
         }
         if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
-            c_id = getIntent().getStringExtra("EXTRA_TEACHER_COURSE_NAME_ID").substring(7,10);
-            //System.out.println("AAAAAAAAAAAAAAAAAAA      " + c_id);
+            c_id = getIntent().getStringExtra("EXTRA_TEACHER_COURSE_NAME_ID");
+            c_id = c_id.substring(c_id.length()-5,c_id.length()-2);
+            l_number = getIntent().getIntExtra("EXTRA_LECTURE_NUMBER",l_number);
+            //System.out.println("AAAAAAAAAAAAAAAAAAA      " + l_number);
             grouplistView = findViewById(R.id.peerListView);
             isGroupOwner = true;
         }
@@ -193,9 +218,7 @@ public class MyWiFiActivity extends AppCompatActivity {
         }
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         if (mManager != null) {
-            /** register your application with the Wi-Fi P2P framework by calling initialize().
-             *  This method returns a WifiP2pManager.Channel, which is used to connect your application
-             *  to the Wi-Fi P2P framework.*/
+
             mChannel =  mManager.initialize(this, getMainLooper(), null);
             if (mChannel == null) {
                 //Failure to set up connection
@@ -204,12 +227,10 @@ public class MyWiFiActivity extends AppCompatActivity {
             }
         } else {
             Toast.makeText(this, "This device does not support Wi-Fi Direct", Toast.LENGTH_LONG).show();
+
+            finish();
         }
 
-        /** You should also create an instance of your broadcast receiver with the WifiP2pManager and
-         *  WifiP2pManager.Channel objects along with a reference to your activity.
-         *  This allows your broadcast receiver to notify your activity of interesting events and
-         *  update it accordingly. It also lets you manipulate the device's Wi-Fi state if necessary: */
         mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
 
         mIntentFilter = new IntentFilter();
@@ -218,7 +239,9 @@ public class MyWiFiActivity extends AppCompatActivity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
+        //להחזיר את changeDeviceName()!!!! - זמני רק בשביל לבדוק כמה פונקציות
         changeDeviceName();
+
         //btnDiscover.performClick();
         //btnDiscover.callOnClick();
     }
@@ -613,7 +636,7 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
-    public ArrayList<String> reportStudentsPresence(float numOfCheckBeats){
+    public void reportStudentsPresence(float numOfCheckBeats){
 
         String stdInCourse;
         ArrayList<String> reportThisStudentToDB = new ArrayList<>();
@@ -637,9 +660,231 @@ public class MyWiFiActivity extends AppCompatActivity {
             }
         }
         System.out.println("reportThisStudentToDB: " + reportThisStudentToDB);
+        if(reportThisStudentToDB.size() > 0) {
+            String l_num = String.valueOf(l_number);
+            for (int i = 0; i < reportThisStudentToDB.size(); i++) {
+                System.out.println("insert to DB: " + reportThisStudentToDB.get(i) + " " + l_num);
+                getStudentDetails(reportThisStudentToDB.get(i), l_num);
+
+            }
+            addLecture();
+        }
+
+    }
 
 
-        return reportThisStudentToDB;
+
+
+
+
+    public void getStudentDetails(String id, String l_num){
+
+        final String s_id = id;
+        final String fc_id = c_id;
+        final String fl_num = l_num;
+
+        StringRequest stringRequest = new StringRequest
+                (Request.Method.POST, Constants.URL_S_ACTIVITY,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+
+                                try {
+
+                                    JSONObject jsonObject = new JSONObject(response);
+
+                                    if (!jsonObject.getBoolean("error")) {
+
+                                        System.out.println(jsonObject.getString("s_details"));
+                                        Date time = (Calendar.getInstance().getTime());
+                                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yy  HH:mm:ss ");
+                                        String dateAndTime = simpleDateFormat.format(time.getTime());
+                                        addStudentTo_tbl_lectures(fl_num ,fc_id, jsonObject.getString("s_id"), jsonObject.getString("s_firstName"),
+                                                jsonObject.getString("s_lastName"), jsonObject.getString("s_department"), dateAndTime);
+
+
+
+                                    } else {
+                                        Toast.makeText(
+                                                getApplicationContext(),
+                                                jsonObject.getString("message"),
+                                                Toast.LENGTH_LONG
+                                        ).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                                Toast.makeText(
+                                        getApplicationContext(),
+                                        "Connection failed, Please try again",
+                                        Toast.LENGTH_LONG
+                                ).show();
+
+                            }
+                        }) {
+
+            //Push parameters to Request.Method.POST
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+
+                params.put("s_id", s_id);
+
+                return params;
+            }
+        };
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+    }
+
+
+
+
+
+
+    public void addStudentTo_tbl_lectures(final String l_num, final String c_id, final String s_id, final String s_firstName,
+                                          final String s_lastName, final String dep_name, final String dateAndTime){
+
+
+        StringRequest stringRequest = new StringRequest
+                (Request.Method.POST, Constants.URL_INSERT_STUDENT,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+
+                                try {
+
+                                    JSONObject jsonObject = new JSONObject(response);
+
+                                    if (!jsonObject.getBoolean("error")) {
+
+                                        System.out.println(jsonObject.getString("message"));
+
+
+
+                                    } else {
+                                        Toast.makeText(
+                                                getApplicationContext(),
+                                                jsonObject.getString("message"),
+                                                Toast.LENGTH_LONG
+                                        ).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                                Toast.makeText(
+                                        getApplicationContext(),
+                                        "Connection failed, Please try again",
+                                        Toast.LENGTH_LONG
+                                ).show();
+
+                            }
+                        }) {
+
+            //Push parameters to Request.Method.POST
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+
+                params.put("l_number", l_num);
+                params.put("c_id", c_id);
+                params.put("s_id", s_id);
+                params.put("s_firstName", s_firstName);
+                params.put("s_lastName", s_lastName);
+                params.put("dep_name", dep_name);
+                params.put("student_status", "arrive");
+                params.put("dateAndTime", dateAndTime);
+
+                return params;
+            }
+        };
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+
+
+    }
+
+
+
+
+
+
+    public void addLecture() {
+
+        //mProgressBar.setVisibility(View.VISIBLE);
+
+
+        StringRequest stringRequest = new StringRequest
+                (Request.Method.POST, Constants.URL_INSERT_LEC,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                //mProgressBar.setVisibility(View.INVISIBLE);
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    //If there is no error message in the JSON string
+                                    if (!jsonObject.getBoolean("error")) {
+                                        // NO NEED TO GET JASON ERROR
+
+
+                                    } else {
+                                        Toast.makeText(
+                                                getApplicationContext(),
+                                                jsonObject.getString("message"),
+                                                Toast.LENGTH_LONG
+                                        ).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                //mProgressBar.setVisibility(View.INVISIBLE);
+                                Toast.makeText(
+                                        getApplicationContext(),
+                                        "Connection failed, Please try again",
+                                        Toast.LENGTH_LONG
+                                ).show();
+
+                            }
+                        }) {
+
+            //Push parameters to Request.Method.POST
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+
+                params.put("dateAndTime", endStrDate);
+                params.put("c_id", c_id);
+                params.put("t_id", SharedPrefManager.getInstance(getApplicationContext()).getUserId());
+                params.put("l_id", String.valueOf(l_number));
+
+                return params;
+            }
+        };
+
+        //Making a connection by singleton class to the database with stringRequest
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+
     }
 
 

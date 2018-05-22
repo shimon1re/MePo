@@ -11,6 +11,8 @@ public class Constants {
     public static final String URL_T_EXPORTEXCELFILE = ROOT_URL+"exportToExcel.php";
     public static final String URL_CHANGE_STATUS = ROOT_URL+"changeStudentStatus.php";
     public static final String URL_GET_LNUMBER = ROOT_URL+"getLectureNumber.php";
+    public static final String URL_INSERT_LEC = ROOT_URL+"addNewLec.php";
+    public static final String URL_INSERT_STUDENT = ROOT_URL+"registerStudentToTblLecture.php";
 
 
 
