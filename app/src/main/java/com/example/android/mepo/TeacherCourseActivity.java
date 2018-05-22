@@ -22,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -302,8 +303,12 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
 
         if (v == mBtn_start) {// =-====Add new lecture======
             getMaxLecture();
+            //Calendar calendar = Calendar.getInstance();
+            //strDate = simpleDateFormat.format(calendar.getTime());
             time = (Calendar.getInstance().getTime());
-            dateAndTime = time.toString();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yy  HH:mm:ss a");
+            //dateAndTime = time.toString();
+            dateAndTime = simpleDateFormat.format(time.getTime());
             String temp_c_id = COURSE_NAME_ID.replaceAll("[A-z]", "");
             c_id = temp_c_id.replaceAll("[\\[\"\\],-]", "");
             t_id = SharedPrefManager.getInstance(getApplicationContext()).getUserId();

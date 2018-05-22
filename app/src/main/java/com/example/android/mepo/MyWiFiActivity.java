@@ -219,7 +219,8 @@ public class MyWiFiActivity extends AppCompatActivity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         changeDeviceName();
-        btnDiscover.performClick();
+        //btnDiscover.performClick();
+        //btnDiscover.callOnClick();
     }
 
 
@@ -242,6 +243,7 @@ public class MyWiFiActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                System.out.println("Discover");
                 //if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null)
                 checkPresenceRunnable = new CheckPresenceRunnable( MyWiFiActivity.this);
 
