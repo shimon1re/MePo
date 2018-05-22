@@ -25,8 +25,9 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
     private ProgressBar mProgressBar;
     private Toast mToast;
     //private TextView mTvUserWelcome;
-    public static ArrayList<String> list_of_students = new ArrayList<String>();;
-
+    public static ArrayList<String> list_of_students = new ArrayList<String>();
+    public static ArrayList<String> course_list = new ArrayList<String>();
+    public String l_id;
 
 
 
@@ -44,13 +45,13 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
 
         //mTvUserWelcome = findViewById(R.id.tv_hello_user);
         //mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
-
+        Bundle extras = getIntent().getExtras();
 
         STUDENTS_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_LECTURES_DETAILS_SIZE",0);
-
+        l_id = getIntent().getStringExtra("l_id");
         list_of_students = getIntent().getStringArrayListExtra("EXTRA_LECTURES_DETAILS");
         System.out.println("check2" + list_of_students);
-
+        course_list  = getIntent().getStringArrayListExtra("COURSE_LIST");
 
         mNumbersListRecycler = findViewById(R.id.rv_studentsInLecture);
 
@@ -90,12 +91,16 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
         if (mToast != null) {
             mToast.cancel();
         }
-        //Here we have to load the list of lectures that belong to the specific course,
-        //and open them in a new screen.
-        //String toastMessage = list_of_courses_names.get(clickedItemIndex).toString().replaceAll("[\\[\"\\],-]","") + " clicked.";
-        //mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
-
-        //mToast.show();
+        String S_ID = list_of_students.get(clickedItemIndex).substring(2,7);
+        
+        Intent intent = new Intent(getApplicationContext(), changeUserStatus.class);
+-        //Get AND Send the list of course to the next Activity
+ 
+ 
+-        intent.putExtra("COURSE_LIST", course_list);
+-        intent.putExtra("S_ID", S_ID);
+-        intent.putExtra("L_ID", l_id);
+-        startActivity(intent);
     }
 
 
