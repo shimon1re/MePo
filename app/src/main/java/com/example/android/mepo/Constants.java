@@ -13,7 +13,7 @@ public class Constants {
     public static final String URL_GET_LNUMBER = ROOT_URL+"getLectureNumber.php";
     public static final String URL_INSERT_LEC = ROOT_URL+"addNewLec.php";
     public static final String URL_INSERT_STUDENT = ROOT_URL+"registerStudentToTblLecture.php";
-
+    public static final String DELETE_LECTURE = ROOT_URL+"deleteLec.php";
 
 
 

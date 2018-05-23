@@ -30,4 +30,13 @@
         android:text="Student presence:"
         android:textSize="25sp" />
 
+    <Button
+        android:id="@+id/delLecButt"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:text="DELETE LECTURE"
+        android:textAllCaps="false"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold|italic" />
+
 </FrameLayout>

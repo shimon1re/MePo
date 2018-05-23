@@ -7,10 +7,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
@@ -28,6 +41,8 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
     public static ArrayList<String> list_of_students = new ArrayList<String>();
     public static ArrayList<String> course_list = new ArrayList<String>();
     public String l_id;
+    public String c_id;
+    public Button delLecButt;
 
 
 
@@ -38,17 +53,17 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
 
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
-        /*Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-        String formattedDate = df.format(c);*/
-
-
-        //mTvUserWelcome = findViewById(R.id.tv_hello_user);
-        //mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
         Bundle extras = getIntent().getExtras();
 
         STUDENTS_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_LECTURES_DETAILS_SIZE",0);
         l_id = getIntent().getStringExtra("l_id");
+        c_id = getIntent().getStringExtra("c_id");
+        delLecButt = (Button) findViewById(R.id.delLecButt);
+        delLecButt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                deleteLec();
+            }
+        });
         list_of_students = getIntent().getStringArrayListExtra("EXTRA_LECTURES_DETAILS");
         System.out.println("check2" + list_of_students);
         course_list  = getIntent().getStringArrayListExtra("COURSE_LIST");
@@ -134,7 +149,67 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
     }
 
 
+    public void deleteLec()
+    {
+        StringRequest stringRequest = new StringRequest
+                (Request.Method.POST, Constants.DELETE_LECTURE,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
 
+                                // mProgressBar.setVisibility(View.INVISIBLE);
+                                try{
+
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    //If there is no error message in the JSON string
+                                    if(!jsonObject.getBoolean("error")){
+                                        Toast.makeText(
+                                                getApplicationContext(),
+                                                jsonObject.getString("message"),
+                                                Toast.LENGTH_LONG
+                                        ).show();
+
+                                    }else{
+                                        Toast.makeText(
+                                                getApplicationContext(),
+                                                jsonObject.getString("message"),
+                                                Toast.LENGTH_LONG
+                                        ).show();
+                                    }
+
+                                } catch (JSONException e){
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                //mProgressBar.setVisibility(View.INVISIBLE);
+                                Toast.makeText(
+                                        getApplicationContext(),
+                                        "Connection failed, Please try again",
+                                        Toast.LENGTH_LONG
+                                ).show();
+                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                finish();
+                            }
+                        }){
+
+            //Push parameters to Request.Method.POST
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("c_id",c_id);
+                params.put("l_id",l_id);
+                return params;
+            }
+        };
+
+        //Making a connection by singleton class to the database with stringRequest
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+
+    }
 
 
 

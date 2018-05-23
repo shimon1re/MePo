@@ -135,6 +135,7 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
                                         intent.putExtra("EXTRA_LECTURES_DETAILS_SIZE", list_of_students_in_lecture.size());
                                         intent.putExtra("EXTRA_LECTURES_DETAILS", list_of_students_in_lecture);
                                         intent.putExtra("l_id", l_num);
+                                        intent.putExtra("c_id", c_id);
 
 
 
