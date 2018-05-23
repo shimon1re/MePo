@@ -179,17 +179,7 @@ public class MyWiFiActivity extends AppCompatActivity {
         System.out.println("initWork");
         list_of_students_in_course = getIntent().getStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE");
 
-        //stdStatusCountMap = new HashMap<>();
-        /*int[] statusCount =new int[1];
-        statusCount[0] = 0;
-        String clean;
-        if(list_of_students_in_course != null) {
-            for (int i = 0; i < list_of_students_in_course.size(); i++) {
-                clean = list_of_students_in_course.get(i);
-                clean = clean.replaceAll("[\\[\"\\],-]", "");
-                stdStatusCountMap.put(clean, statusCount);
-            }
-        }*/
+
         btnOnOff = findViewById(R.id.onOff);
         btnDiscover = findViewById(R.id.discover);
         btnEnd = findViewById(R.id.endButton);
@@ -300,6 +290,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                     checkPresenceRunnable.cancelTimer();
                     flag = 0;
                     checkPresence();
+                    finish();
 
                 }
                 if(!connectionStatus.getText().equals("Device Disconnected")) {
@@ -689,7 +680,7 @@ public class MyWiFiActivity extends AppCompatActivity {
             for (int i = 0; i < list_of_students_in_course.size(); i++) {
                 stdInCourse = list_of_students_in_course.get(i);
                 stdInCourse = stdInCourse.replaceAll("[\\[\"\\],-]", "");
-                pass =  (numOfCheckBeats / (float) stdStatusCountMap.get(stdInCourse)[0]);
+                pass =  ((float) stdStatusCountMap.get(stdInCourse)[0] / numOfCheckBeats);
                 System.out.println("stdInCourse: " + stdInCourse + "  count: " + stdStatusCountMap.get(stdInCourse)[0]);
                 System.out.println("pass" + pass);
                 if( pass >= 0.5 && stdStatusCountMap.get(stdInCourse)[0] != 0){

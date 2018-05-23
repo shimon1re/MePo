@@ -1,6 +1,8 @@
 package com.example.android.mepo;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -39,6 +41,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
     private ProgressBar mProgressBar;
     private String COURSE_NAME_ID;
     public static String IsTeacherCourseActivity;
+    WifiManager wifiManager;
 
     ArrayList<String> list_of_students_in_course = new ArrayList<String>();
 
@@ -54,6 +57,11 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher_course);
+
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (!wifiManager.isWifiEnabled()) {
+            wifiManager.setWifiEnabled(true);
+        }
 
         IsTeacherCourseActivity = null;
         IsTeacherLecturesActivity = null;

@@ -1,6 +1,8 @@
 package com.example.android.mepo;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -31,6 +33,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
     private ProgressBar mProgressBar;
     private String COURSE_NAME_ID;
     private String t_idOfCourse, c_id;
+    WifiManager wifiManager;
 
     public static String IsStudentCourseActivity;
 
@@ -62,6 +65,11 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
 
 
     public void initComponnents(){
+
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (!wifiManager.isWifiEnabled()) {
+            wifiManager.setWifiEnabled(true);
+        }
 
         IsStudentCourseActivity = null;
         mBtn_start = findViewById(R.id.btn_start);
