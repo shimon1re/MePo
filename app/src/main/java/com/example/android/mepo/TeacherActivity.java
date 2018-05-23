@@ -122,7 +122,7 @@ public class TeacherActivity extends AppCompatActivity
 
                                         JSONArray students_in_course_arr;
                                         students_in_course_arr = jsonObject.getJSONArray("s_ids");
-                                        System.out.println(students_in_course_arr);
+                                        //System.out.println(students_in_course_arr);
                                         ArrayList<String> list_of_students_in_course = new ArrayList<String>();
                                         if (students_in_course_arr != null) {
                                             for (int i = 0; i < students_in_course_arr.length(); i++) {
@@ -139,7 +139,7 @@ public class TeacherActivity extends AppCompatActivity
                                         intent.putExtra("EXTRA_TEACHER_COURSE_NAME_ID", list_of_courses_names_id.get(courseIndex).toString());
 
                                         intent.putExtra("EXTRA_STUDENTS_IN_COURSE_SIZE", list_of_students_in_course.size());
-                                        System.out.println("TeacherActivity list_of_students_in_course " + list_of_students_in_course);
+                                        //System.out.println("TeacherActivity list_of_students_in_course " + list_of_students_in_course);
                                         intent.putExtra("EXTRA_STUDENTS_IN_COURSE", list_of_students_in_course);
                                         startActivity(intent);
 

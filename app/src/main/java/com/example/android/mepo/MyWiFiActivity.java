@@ -73,7 +73,7 @@ public class MyWiFiActivity extends AppCompatActivity {
     String[] deviceNameArray;
     String[] groupDevicesNamesArray;
     String[] groupDeviceIsCorrectStudent;
-    Map<String, int[]> stdStatusCountMap;
+    Map<String, int[]> stdStatusCountMap ;
     WifiP2pDevice[] deviceArray;
     WifiP2pDevice[] groupDeviceArray;
 
@@ -125,7 +125,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                     if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null)
                         checkPresence();
                     else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null &&
-                            !connectionStatus.getText().equals("Client") && numToRestartDiscovery<5 && studentIsConnect == false) {
+                            !connectionStatus.getText().equals("Client") && numToRestartDiscovery < 5 && studentIsConnect == false) {
                         resetDiscover();
                         numToRestartDiscovery++;
                     }
@@ -179,8 +179,8 @@ public class MyWiFiActivity extends AppCompatActivity {
         System.out.println("initWork");
         list_of_students_in_course = getIntent().getStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE");
 
-        stdStatusCountMap = new HashMap<>();
-        int[] statusCount =new int[1];
+        //stdStatusCountMap = new HashMap<>();
+        /*int[] statusCount =new int[1];
         statusCount[0] = 0;
         String clean;
         if(list_of_students_in_course != null) {
@@ -189,7 +189,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                 clean = clean.replaceAll("[\\[\"\\],-]", "");
                 stdStatusCountMap.put(clean, statusCount);
             }
-        }
+        }*/
         btnOnOff = findViewById(R.id.onOff);
         btnDiscover = findViewById(R.id.discover);
         btnEnd = findViewById(R.id.endButton);
@@ -267,6 +267,7 @@ public class MyWiFiActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 System.out.println("Discover");
+                numToRestartDiscovery = 0;
                 //if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null)
                 checkPresenceRunnable = new CheckPresenceRunnable( MyWiFiActivity.this);
 
@@ -370,6 +371,19 @@ public class MyWiFiActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Group Created" , Toast.LENGTH_SHORT).show();
                         haveGroup = true;
                         endStrDate = null;
+
+                        System.out.println("init stdStatusCountMap");
+                        stdStatusCountMap = new HashMap<>();
+                        int[] statusCount =new int[1];
+                        statusCount[0] = 0;
+                        String clean;
+                        if(list_of_students_in_course != null) {
+                            for (int i = 0; i < list_of_students_in_course.size(); i++) {
+                                clean = list_of_students_in_course.get(i);
+                                clean = clean.replaceAll("[\\[\"\\],-]", "");
+                                stdStatusCountMap.put(clean, statusCount);
+                            }
+                        }
                     }
 
                     @Override
@@ -391,6 +405,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                      *  provide any information about the actual peers that it discovered, if any*/
                     public void onSuccess() {
                         Toast.makeText(getApplicationContext(), "Discovery Started...", Toast.LENGTH_LONG).show();
+
                     }
 
                     @Override
@@ -588,6 +603,17 @@ public class MyWiFiActivity extends AppCompatActivity {
                 endMin = Integer.parseInt(endStrDate.substring(16, 18));
                 System.out.println("startHouer " + startHouer + "   startMin " + startMin);
                 System.out.println("endHouer " + endHouer + "   endMin " + endMin);
+                //זמני - רק בשביל בדיקות
+                if(startHouer > 24 && endHouer > 24){
+                    subHouers = endHouer - startHouer;
+                    subHouers = subHouers % 24;
+                }
+                //זמני - רק בשביל בדיקות
+                else if(startHouer > 24 && endHouer < 24){
+                    startHouer = 60 - startHouer;
+                    subHouers = startHouer + endHouer;
+                }
+
                 subHouers = endHouer - startHouer;
                 if (subHouers < 0) {
                     subHouers = 24 + (subHouers);
@@ -606,6 +632,23 @@ public class MyWiFiActivity extends AppCompatActivity {
                 //call the function that report to DB
                 reportStudentsPresence(numOfCheckBeats);
 
+            }
+        }
+
+
+
+        if(stdStatusCountMap == null){
+            System.out.println("init stdStatusCountMap");
+            stdStatusCountMap = new HashMap<>();
+            int[] statusCount =new int[1];
+            statusCount[0] = 0;
+            String clean;
+            if(list_of_students_in_course != null) {
+                for (int i = 0; i < list_of_students_in_course.size(); i++) {
+                    clean = list_of_students_in_course.get(i);
+                    clean = clean.replaceAll("[\\[\"\\],-]", "");
+                    stdStatusCountMap.put(clean, statusCount);
+                }
             }
         }
 
@@ -664,10 +707,11 @@ public class MyWiFiActivity extends AppCompatActivity {
             String l_num = String.valueOf(l_number);
             for (int i = 0; i < reportThisStudentToDB.size(); i++) {
                 System.out.println("insert to DB: " + reportThisStudentToDB.get(i) + " " + l_num);
-                getStudentDetails(reportThisStudentToDB.get(i), l_num);
+                getStudentDetailsFromDB(reportThisStudentToDB.get(i), l_num);
 
             }
             addLecture();
+            Toast.makeText(this, "Those present successfully registered!", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -677,7 +721,7 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
-    public void getStudentDetails(String id, String l_num){
+    public void getStudentDetailsFromDB(String id, String l_num){
 
         final String s_id = id;
         final String fc_id = c_id;
@@ -1009,8 +1053,8 @@ public class MyWiFiActivity extends AppCompatActivity {
                 if (!group.getClientList().equals(clients)) {
                     if(clients!=null && group.getClientList().size() > clients.size()) {
                         flag = 1;
-                        System.out.println("1Clients: " + clients.size());
-                        System.out.println("group.getClientList(): " + group.getClientList().size());
+                        //System.out.println("1Clients: " + clients.size());
+                        //System.out.println("group.getClientList(): " + group.getClientList().size());
                     }
                     clients.clear();
                     clients.addAll(group.getClientList());
@@ -1024,21 +1068,22 @@ public class MyWiFiActivity extends AppCompatActivity {
                     /**Initialize a set of found devices*/
                     for (WifiP2pDevice device : group.getClientList()) {
                         for (int i = 0; i < list_of_students_in_course.size(); i++) {
-                            System.out.println("device.deviceName: " + device.deviceName);
+                            //System.out.println("device.deviceName: " + device.deviceName);
                             //System.out.println("list_of_students_in_course.get(i): " + list_of_students_in_course.get(i));
                             String clean = list_of_students_in_course.get(i);
                             clean = clean.replaceAll("[\\[\"\\],-]", "");
                             deviceSID =device.deviceName.substring(0,5);
                             deviceCID = device.deviceName.substring(6,9);
-                            System.out.println("deviceSID " + deviceSID + "  deviceCID" + deviceCID);
+                            //System.out.println("deviceSID " + deviceSID + "  deviceCID" + deviceCID);
                             //if (device.deviceName.equals(clean)) {
                             if (deviceSID.equals(clean) && deviceCID.equals(c_id)) {
-                                System.out.println("equal");
+                                //System.out.println("equal");
                                 //groupDevicesNamesArray[index] = device.deviceName;
                                 groupDevicesNamesArray[index] = deviceSID;
                                 groupDeviceArray[index] = device;
                                 index++;
-                                System.out.println("index " + index);
+                                //System.out.println("index " + index);
+                                connectionStatus.setText("Host");
                                 //Toast.makeText(getApplicationContext(), "group index " + index, Toast.LENGTH_SHORT).show();
                                 //Toast.makeText(getApplicationContext(), "group Found " + device.deviceName, Toast.LENGTH_SHORT).show();
                             }
@@ -1052,8 +1097,8 @@ public class MyWiFiActivity extends AppCompatActivity {
                             groupDeviceIsCorrectStudent[i] = groupDevicesNamesArray[i];
                             if(flag == 1 )
                                 Toast.makeText(getApplicationContext(), groupDeviceIsCorrectStudent[i] + " connected", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(getApplicationContext(),"index " + index, Toast.LENGTH_SHORT).show();
-                            System.out.println("insert to the new arrey: " + groupDeviceIsCorrectStudent[i]);
+                            //Toast.makeText(getApplicationContext(),"index " + index, Toast.LENGTH_SHORT).show();
+                            //System.out.println("insert to the new arrey: " + groupDeviceIsCorrectStudent[i]);
                         }
                     }
 
@@ -1109,7 +1154,7 @@ public class MyWiFiActivity extends AppCompatActivity {
             if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner && haveGroup == true){
                 //oneTimeServer++;
                 //System.out.println("serverClass");
-                connectionStatus.setText("Host");
+                //connectionStatus.setText("Host");
                 if(checkPresenceRunnable == null)
                     checkPresenceRunnable = new CheckPresenceRunnable( MyWiFiActivity.this);
                 //serverClass = new ServerClass();

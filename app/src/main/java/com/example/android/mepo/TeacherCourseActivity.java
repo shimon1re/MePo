@@ -114,7 +114,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
 
                                             }
 
-                                            System.out.println(list_of_lectures);
+                                            //System.out.println(list_of_lectures);
                                         } else {
                                             System.out.println("lectures_arr = null!!!!!!!!!!!!");
                                         }
@@ -341,7 +341,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
                                         maxLectureNumber =  maxLectureNumber.replaceAll("[^\\d.]", "");
                                         intMaxLectureNumber= Integer.parseInt(maxLectureNumber);
                                         intMaxLectureNumber = intMaxLectureNumber+1;
-                                        System.out.println("===="+intMaxLectureNumber);
+                                        //System.out.println("===="+intMaxLectureNumber);
 
                                         IsTeacherCourseActivity = "yes";
 
