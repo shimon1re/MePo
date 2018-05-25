@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.android.mepo.TeacherCoursePrevLecActivity.IsTeacherLecturesActivity;
+
 
 public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
         implements RecyclerViewAdapter.ListItemClickListener{
@@ -76,7 +78,6 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
         //Initializing the RecyclerViewAdapter class
         mAdapter = new RecyclerViewAdapter(STUDENTS_NUM_LIST_ITEMS, this);
         mNumbersListRecycler.setAdapter(mAdapter);
-
 
         //check if user logged in or not.
         if(!SharedPrefManager.getInstance(this).isLoggedIn()){
@@ -211,6 +212,12 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onBackPressed() {
+        System.out.println("Back");
+        IsTeacherLecturesActivity = null;
+        finish();
+    }
 
 
 }

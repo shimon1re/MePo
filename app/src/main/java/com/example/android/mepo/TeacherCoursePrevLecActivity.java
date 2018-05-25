@@ -78,8 +78,6 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
         //Initializing the RecyclerViewAdapter class
         mAdapter = new RecyclerViewAdapter(COURSE_NUM_LIST_ITEMS, this);
         mNumbersListRecycler.setAdapter(mAdapter);
-
-
         //check if user logged in or not.
         if(!SharedPrefManager.getInstance(this).isLoggedIn()){
             finish();
@@ -144,6 +142,7 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
                                         //for the Recyclerview adapter
                                         //IsCourse = "yes";
                                         startActivity(intent);
+                                        //finish();
 
 
 
@@ -200,9 +199,21 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
 
 
     public static ArrayList<String> getListOfTeacherCourseLectures(){
-        return list_of_lectures;
-    }
+        /*String l_num, l_temp;
+        int foo ;
+        ArrayList<String> sorted_list_of_lec = new ArrayList<>();
+        for(int i=0; i<list_of_lectures.size();i++ ){
+            l_temp = list_of_lectures.get(i);
+            l_num = l_temp.substring(2, 4).replaceAll("[\\[\"]","");
+            foo = Integer.parseInt(l_num)-1;
+            sorted_list_of_lec.add(foo, list_of_lectures.get(i));
+            sorted_list_of_lec.set()
+        }
 
+        return sorted_list_of_lec;*/
+        return list_of_lectures;
+
+    }
 
 
 

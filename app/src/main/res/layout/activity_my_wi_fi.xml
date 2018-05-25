@@ -32,7 +32,7 @@
             android:layout_alignBaseline="@+id/onOff"
             android:layout_alignBottom="@+id/onOff"
             android:layout_centerHorizontal="true"
-            android:text="discover" />
+            android:text="Start" />
 
 
         <ListView
@@ -67,7 +67,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="End" />
+            android:text="End of lecture" />
 
         <TextView
             android:id="@+id/connectionStatus"

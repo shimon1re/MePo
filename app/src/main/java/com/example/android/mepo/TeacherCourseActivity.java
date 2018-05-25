@@ -35,6 +35,7 @@ import static com.example.android.mepo.TeacherCoursePrevLecActivity.IsTeacherLec
 
 
 
+
 public class TeacherCourseActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button mBtn_prev_lectures, mBtn_start, mBtn_send_report;
@@ -62,8 +63,10 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
         if (!wifiManager.isWifiEnabled()) {
             wifiManager.setWifiEnabled(true);
         }
-
-        IsTeacherCourseActivity = null;
+        if(IsTeacherLecturesActivity != null) {
+            IsTeacherCourseActivity = null;
+            IsTeacherCourseActivity = "yes";
+        }
         IsTeacherLecturesActivity = null;
 
         //check if user logged in or not.
@@ -111,7 +114,8 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
 
                                         JSONArray lectures_arr;
                                         lectures_arr = jsonObject.getJSONArray("c_lectures");
-                                        //System.out.println(lectures_arr);
+                                        System.out.println("lectures_arr");
+                                        System.out.println(lectures_arr);
 
                                         ArrayList<String> list_of_lectures = new ArrayList<String>();
                                         if (lectures_arr != null) {
