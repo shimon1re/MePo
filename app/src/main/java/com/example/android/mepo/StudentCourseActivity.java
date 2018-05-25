@@ -31,7 +31,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
 
     private Button mBtn_prev_lectures,mBtn_start;
     private ProgressBar mProgressBar;
-    private String COURSE_NAME_ID;
+    private String COURSE_NAME_ID, BACKCOURSE_NAME_ID;
     private String t_idOfCourse, c_id;
     WifiManager wifiManager;
 
@@ -81,6 +81,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         COURSE_NAME_ID =  getIntent().getStringExtra("EXTRA_STUDENT_COURSE_NAME_ID");
+        System.out.println("COURSE_NAME_ID " + COURSE_NAME_ID);
         c_id = COURSE_NAME_ID;
         t_idOfCourse = COURSE_NAME_ID.substring(COURSE_NAME_ID.length()-7,COURSE_NAME_ID.length()-2);
     }
@@ -93,8 +94,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
     public void courseDetails(){
 
         mProgressBar.setVisibility(View.VISIBLE);
-
-
+        c_id = getIntent().getStringExtra("EXTRA_STUDENT_COURSE_NAME_ID");
         StringRequest stringRequest = new StringRequest
                 (Request.Method.POST, Constants.URL_S_ACTIVITY,
                         new Response.Listener<String>() {
