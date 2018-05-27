@@ -161,15 +161,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     }
                     else {
                         IsTeacherLecturesActivity = null;
-                        String clean, l_date;
-                        int l_num;
-                        ArrayList<String> list_of_lectures_names = getListOfTeacherCourseLectures();
-                        clean = list_of_lectures_names.get(listIndex).toString();
-                        l_date = clean.substring(6, 15);
-                        l_date = l_date.replaceAll("[\\[\"]","");
-                        l_num = listIndex+1;
-                        //l_num = clean.substring(2, 4);
-                        //l_num = l_num.replaceAll("[\\[\"]","");
+                        String clean, l_date, l_num;
+                        String[] list_of_lectures_names = getListOfTeacherCourseLectures();
+                        clean = list_of_lectures_names[listIndex];
+                        l_date = clean.substring(6,15).replaceAll("[\\[\"]","");
+                        l_num = clean.substring(2, 4).replaceAll("[\\[\"]","");
                         teacherCourseListItemNumberView.setText("Lecture " + l_num + ": " + l_date);
                     }
                 }

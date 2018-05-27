@@ -192,7 +192,7 @@ public class MyWiFiActivity extends AppCompatActivity {
         if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
             c_id = getIntent().getStringExtra("EXTRA_TEACHER_COURSE_NAME_ID");
             c_id = c_id.substring(c_id.length()-5,c_id.length()-2);
-            l_number = getIntent().getIntExtra("EXTRA_LECTURE_NUMBER",l_number);
+            l_number = getIntent().getIntExtra("EXTRA_LECTURE_NUMBER",l_number) + 1;
             grouplistView = findViewById(R.id.peerListView);
             isGroupOwner = true;
         }
@@ -257,7 +257,9 @@ public class MyWiFiActivity extends AppCompatActivity {
                 System.out.println("Discover");
                 numToRestartDiscovery = 0;
                 //if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null)
-                checkPresenceRunnable = new CheckPresenceRunnable( MyWiFiActivity.this);
+
+                checkPresenceRunnable = new CheckPresenceRunnable(MyWiFiActivity.this);
+
 
                 endButtonPressed = false;
                 discoverAndCreateGroup();
@@ -1007,22 +1009,21 @@ public class MyWiFiActivity extends AppCompatActivity {
 
                     for (WifiP2pDevice device : peerList.getDeviceList()) {
                         System.out.println("device founded: " + device.deviceName);
-                        deviceTID = device.deviceName.substring(0,5);
-                        deviceCID = device.deviceName.substring(6,9);
-                        System.out.println("deviceTID " + deviceTID + "  deviceCID" + deviceCID);
-                        //System.out.println("courseT_ID founded: " + courseT_ID);
-                        //courseT_ID = courseT_ID.concat("_" + c_id);
-                        //if(device.deviceName.equals(courseT_ID) ) {
-                        if(deviceCID.equals(c_id) && deviceTID.equals(courseT_ID)) {
-                            System.out.println("equal");
-                            System.out.println("device.isGroupOwner(): " + device.isGroupOwner());
-                            //deviceNameArray[0] = device.deviceName;
-                            deviceNameArray[0] = deviceTID;
-                            deviceArray[0] = device;
+                        if(device.deviceName.length() == 9){
+                            deviceTID = device.deviceName.substring(0, 5);
+                            deviceCID = device.deviceName.substring(6, 9);
+                            System.out.println("deviceTID " + deviceTID + "  deviceCID" + deviceCID);
 
-                            if(studentConnected == false && SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
+                            if (deviceCID.equals(c_id) && deviceTID.equals(courseT_ID)) {
+                                System.out.println("equal");
+                                System.out.println("device.isGroupOwner(): " + device.isGroupOwner());
+                                deviceNameArray[0] = deviceTID;
+                                deviceArray[0] = device;
 
-                                connectToTeacherGroup(0);
+                                if (studentConnected == false && SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
+
+                                    connectToTeacherGroup(0);
+                                }
                             }
                         }
                     }
@@ -1149,11 +1150,23 @@ public class MyWiFiActivity extends AppCompatActivity {
             }
 
             if(connectionStatus.getText().equals("Device Disconnected") &&
-                    SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null ){
-                studentConnected = false;
+                    SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null){
                 resetListView(0);
-                btnEnd.setVisibility(View.INVISIBLE);
-                btnDiscover.setVisibility(View.VISIBLE);
+                if(endButtonPressed == false && studentConnected==true){
+                    removeGroup();
+                    studentConnected = false;
+                    numToRestartDiscovery = 0;
+
+                    checkPresenceRunnable = new CheckPresenceRunnable(MyWiFiActivity.this);
+
+                    discoverAndCreateGroup();
+                }
+                else {
+                    studentConnected = false;
+                    btnEnd.setVisibility(View.INVISIBLE);
+                    btnDiscover.setVisibility(View.VISIBLE);
+                }
+
             }
             else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null &&
                     connectionStatus.getText().equals("Device Disconnected") && endButtonPressed == false ){
