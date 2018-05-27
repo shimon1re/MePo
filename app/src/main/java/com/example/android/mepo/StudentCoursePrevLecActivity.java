@@ -25,7 +25,7 @@ public class StudentCoursePrevLecActivity extends AppCompatActivity
     private ProgressBar mProgressBar;
     private Toast mToast;
     //private TextView mTvUserWelcome;
-    public static ArrayList<String> list_of_lectures = new ArrayList<String>();;
+    public static ArrayList<String> list_of_lectures = new ArrayList<String>();
 
 
 
@@ -36,15 +36,6 @@ public class StudentCoursePrevLecActivity extends AppCompatActivity
         setContentView(R.layout.activity_student_course_prevlec);
 
         mProgressBar = findViewById(R.id.pb_loading_indicator);
-
-        /*Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-        String formattedDate = df.format(c);*/
-
-
-        //mTvUserWelcome = findViewById(R.id.tv_hello_user);
-        //mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
-
 
         COURSE_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_COURSE_LECTURES_SIZE",0);
 
@@ -75,8 +66,15 @@ public class StudentCoursePrevLecActivity extends AppCompatActivity
 
 
 
-    public static ArrayList<String> getListOfStudentCourseLectures(){
-        return list_of_lectures;
+    public static String[] getListOfStudentCourseLectures(){
+        String[] sorted_list_of_lectures = new String[list_of_lectures.size()];
+        int num;
+        System.out.println("list_of_lectures: " + list_of_lectures);
+        for(int i=0; i<list_of_lectures.size();i++){
+            num = Integer.parseInt(list_of_lectures.get(i).substring(2, 4).replaceAll("[\\[\"]",""));
+            sorted_list_of_lectures[num-1] = list_of_lectures.get(i);
+        }
+        return sorted_list_of_lectures;
     }
 
 

@@ -185,11 +185,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 }
                 else {
                     String clean,l_date,l_num,l_status;
-                    ArrayList<String> list_of_lectures_names = getListOfStudentCourseLectures();
-                    clean = list_of_lectures_names.get(listIndex).toString();
-                    l_date = clean.substring(6,15).replaceAll("[\\[\"]","");;
-                    l_num = clean.substring(2, 4).replaceAll("[\\[\"]","");;
-                    l_status = clean.substring(clean.length()-8,clean.length()-2);
+                    //ArrayList<String> list_of_lectures_names = getListOfStudentCourseLectures();
+                    String[] list_of_lectures_names = getListOfStudentCourseLectures();
+                    clean = list_of_lectures_names[listIndex];
+                    //clean = list_of_lectures_names.get(listIndex).toString();
+                    l_date = clean.substring(6,15).replaceAll("[\\[\"]","");
+                    l_num = clean.substring(2, 4).replaceAll("[\\[\"]","");
+                    l_status = clean.substring(clean.length()-10,clean.length()-2).replaceAll("[\\[\"\\,]","").replaceAll("[0-9]","");
                     studentCourseListItemNumberView.setText("Lecture "+ l_num + ": "+ l_date + " " + l_status);
                 }
             }

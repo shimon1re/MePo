@@ -50,7 +50,7 @@ public class ChangeUserStatus extends AppCompatActivity {
 
         missButt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                newStatus = "miss";
+                newStatus = "Missed";
                 System.out.println("======"+L_ID);
                 System.out.println("======"+S_ID);
                 System.out.println("======"+newStatus);
@@ -67,7 +67,7 @@ public class ChangeUserStatus extends AppCompatActivity {
 
         approveButt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                newStatus = "approve";
+                newStatus = "Approved";
                 System.out.println("======"+L_ID);
                 System.out.println("======"+S_ID);
                 System.out.println("======"+newStatus);
@@ -83,7 +83,7 @@ public class ChangeUserStatus extends AppCompatActivity {
 
         arriveBut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                newStatus = "arrive";
+                newStatus = "Arrived";
                 System.out.println("======"+L_ID);
                 System.out.println("======"+S_ID);
                 System.out.println("======"+newStatus);
