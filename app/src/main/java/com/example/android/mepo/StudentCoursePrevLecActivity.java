@@ -67,6 +67,36 @@ public class StudentCoursePrevLecActivity extends AppCompatActivity
 
 
     public static String[] getListOfStudentCourseLectures(){
+        //לסדר פה את התצוגה כמו אצל המרצה
+        /*int maxLec=0, temp;
+        String s_num;
+        for(int i=0; i<list_of_lectures.size();i++){
+            s_num = list_of_lectures.get(i).substring(2, 4).replaceAll("[\\[\"]","");
+            temp = Integer.valueOf(s_num);
+            if(maxLec <= temp)
+                maxLec = temp;
+        }
+        String[] arr_list_of_lectures = new String[maxLec];
+
+        int num;
+        System.out.println("list_of_lectures: " + list_of_lectures);
+        for(int i=0; i<list_of_lectures.size();i++){
+            num = Integer.parseInt(list_of_lectures.get(i).substring(2, 4).replaceAll("[\\[\"]",""));
+            arr_list_of_lectures[num-1] = list_of_lectures.get(i);
+        }
+
+        sorted_list_of_lec = new ArrayList<>();
+
+        for(int i=0; i<arr_list_of_lectures.length;i++){
+            if(arr_list_of_lectures[i] != null){
+                sorted_list_of_lec.add(arr_list_of_lectures[i]);
+            }
+        }
+        return sorted_list_of_lec;*/
+
+
+
+
         String[] sorted_list_of_lectures = new String[list_of_lectures.size()];
         int num;
         System.out.println("list_of_lectures: " + list_of_lectures);

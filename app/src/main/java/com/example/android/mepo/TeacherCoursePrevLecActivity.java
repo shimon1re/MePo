@@ -41,7 +41,8 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
     //private TextView mTvUserWelcome;
     public static String IsTeacherLecturesActivity;
     public String l_id;
-    public static ArrayList<String> list_of_lectures = new ArrayList<String>();;
+    public static ArrayList<String> list_of_lectures = new ArrayList<String>();
+    public static ArrayList<String> sorted_list_of_lec ;
 
 
 
@@ -81,7 +82,7 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
 
     public void lectureDetails(int clickedItemIndex){
 
-        final String l_num = String.valueOf(clickedItemIndex+1);
+        final String l_num = String.valueOf(clickedItemIndex);
         mProgressBar.setVisibility(View.VISIBLE);
 
 
@@ -190,31 +191,33 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
 
 
 
-    public static String[] getListOfTeacherCourseLectures(){
-        /*String l_num, l_temp;
-        int foo ;
-        ArrayList<String> sorted_list_of_lec = new ArrayList<>();
-        for(int i=0; i<list_of_lectures.size();i++ ){
-            l_temp = list_of_lectures.get(i);
-            l_num = l_temp.substring(2, 4).replaceAll("[\\[\"]","");
-            foo = Integer.parseInt(l_num)-1;
-            sorted_list_of_lec.add(foo, list_of_lectures.get(i));
-            sorted_list_of_lec.set()
+    public static ArrayList<String> getListOfTeacherCourseLectures(){
+
+        int maxLec=0, temp;
+        String s_num;
+        for(int i=0; i<list_of_lectures.size();i++){
+            s_num = list_of_lectures.get(i).substring(2, 4).replaceAll("[\\[\"]","");
+            temp = Integer.valueOf(s_num);
+            if(maxLec <= temp)
+                maxLec = temp;
         }
+        String[] arr_list_of_lectures = new String[maxLec];
 
-        return sorted_list_of_lec;*/
-
-        String[] sorted_list_of_lectures = new String[list_of_lectures.size()];
         int num;
         System.out.println("list_of_lectures: " + list_of_lectures);
         for(int i=0; i<list_of_lectures.size();i++){
             num = Integer.parseInt(list_of_lectures.get(i).substring(2, 4).replaceAll("[\\[\"]",""));
-            sorted_list_of_lectures[num-1] = list_of_lectures.get(i);
+            arr_list_of_lectures[num-1] = list_of_lectures.get(i);
         }
-        return sorted_list_of_lectures;
 
+        sorted_list_of_lec = new ArrayList<>();
 
-        //return list_of_lectures;
+        for(int i=0; i<arr_list_of_lectures.length;i++){
+            if(arr_list_of_lectures[i] != null){
+                sorted_list_of_lec.add(arr_list_of_lectures[i]);
+            }
+        }
+        return sorted_list_of_lec;
 
     }
 
@@ -228,23 +231,12 @@ public class TeacherCoursePrevLecActivity extends AppCompatActivity
         if (mToast != null) {
             mToast.cancel();
         }
-        l_id = list_of_lectures.get(clickedItemIndex).substring(2,3);
+        //l_id = list_of_lectures.get(clickedItemIndex).substring(2,3);
+        System.out.println("clickedItemIndex: " + clickedItemIndex);
+        l_id = sorted_list_of_lec.get(clickedItemIndex).substring(2,4).replaceAll("[\\[\"\\],-]", "");
+        System.out.println("l_id: " + l_id);
 
-        //System.out.println("L_ID"+l_id);
-        //Intent intent = new Intent(getApplicationContext(), TeacherCoursePrevLecDetailsActivity.class);
-        //intent.putExtra("L_ID", l_id);
-        //startActivity(intent);
-
-
-
-        //Here we have to load the list of lectures that belong to the specific course,
-        //and open them in a new screen.
-        //String toastMessage = list_of_courses_names.get(clickedItemIndex).toString().replaceAll("[\\[\"\\],-]","") + " clicked.";
-        //mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
-
-        //mToast.show();
-
-        lectureDetails(clickedItemIndex);
+        lectureDetails(Integer.valueOf(l_id));
     }
 
 

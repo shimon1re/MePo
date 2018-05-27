@@ -141,7 +141,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                 case TASK_TERMINATED:
 
                     Toast.makeText(getApplicationContext(), "Due to inactivity of 5 hours the registration has been discontinued.", Toast.LENGTH_SHORT).show();
-                    btnEnd.performClick();
+                    onBtnEndClick();
                     break;
 
                 default:
@@ -283,40 +283,43 @@ public class MyWiFiActivity extends AppCompatActivity {
         btnEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                endButtonPressed = true;
-                if(checkPresenceRunnable != null && SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
-                    endStrDate = currentDate;
-                    Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
-                    checkPresenceRunnable.cancelTimer();
-                    flag = 0;
-                    checkPresence();
-                    //finish();
 
-                }
-                if(!connectionStatus.getText().equals("Device Disconnected")) {
-                    if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null)
-                        mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
-                            @Override
-                            public void onSuccess() {
-
-                            }
-
-                            @Override
-                            public void onFailure(int reason) {
-
-                            }
-                        });
-                    studentIsConnect = false;
-                    numToRestartDiscovery = 0;
-                    removeGroup();
-                }
-
+                onBtnEndClick();
 
             }
         });
     }
 
 
+
+    public void onBtnEndClick(){
+        endButtonPressed = true;
+        if(!connectionStatus.getText().equals("Device Disconnected")) {
+            Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
+            checkPresenceRunnable.cancelTimer();
+            if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null)
+                mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onFailure(int reason) {
+
+                    }
+                });
+            studentIsConnect = false;
+            numToRestartDiscovery = 0;
+            removeGroup();
+        }
+        if(checkPresenceRunnable != null && SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
+            endStrDate = currentDate;
+            flag = 0;
+            checkPresence();
+        }
+        
+    }
 
 
 
@@ -1153,7 +1156,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                     SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null){
                 resetListView(0);
                 if(endButtonPressed == false && studentConnected==true){
-                    removeGroup();
+                    //removeGroup();
                     studentConnected = false;
                     numToRestartDiscovery = 0;
 
