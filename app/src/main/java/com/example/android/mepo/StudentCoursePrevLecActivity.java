@@ -26,6 +26,7 @@ public class StudentCoursePrevLecActivity extends AppCompatActivity
     private Toast mToast;
     //private TextView mTvUserWelcome;
     public static ArrayList<String> list_of_lectures = new ArrayList<String>();
+    public static ArrayList<String> sorted_list_of_lec ;
 
 
 
@@ -66,9 +67,9 @@ public class StudentCoursePrevLecActivity extends AppCompatActivity
 
 
 
-    public static String[] getListOfStudentCourseLectures(){
+    public static ArrayList<String> getListOfStudentCourseLectures(){
         //לסדר פה את התצוגה כמו אצל המרצה
-        /*int maxLec=0, temp;
+        int maxLec=0, temp;
         String s_num;
         for(int i=0; i<list_of_lectures.size();i++){
             s_num = list_of_lectures.get(i).substring(2, 4).replaceAll("[\\[\"]","");
@@ -92,19 +93,19 @@ public class StudentCoursePrevLecActivity extends AppCompatActivity
                 sorted_list_of_lec.add(arr_list_of_lectures[i]);
             }
         }
-        return sorted_list_of_lec;*/
+        return sorted_list_of_lec;
 
 
 
 
-        String[] sorted_list_of_lectures = new String[list_of_lectures.size()];
+        /*String[] sorted_list_of_lectures = new String[list_of_lectures.size()];
         int num;
         System.out.println("list_of_lectures: " + list_of_lectures);
         for(int i=0; i<list_of_lectures.size();i++){
             num = Integer.parseInt(list_of_lectures.get(i).substring(2, 4).replaceAll("[\\[\"]",""));
             sorted_list_of_lectures[num-1] = list_of_lectures.get(i);
         }
-        return sorted_list_of_lectures;
+        return sorted_list_of_lectures;*/
     }
 
 

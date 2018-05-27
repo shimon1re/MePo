@@ -184,8 +184,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 else {
                     String clean,l_date,l_num,l_status;
                     //ArrayList<String> list_of_lectures_names = getListOfStudentCourseLectures();
-                    String[] list_of_lectures_names = getListOfStudentCourseLectures();
-                    clean = list_of_lectures_names[listIndex];
+                    ArrayList<String> list_of_lectures_names = getListOfStudentCourseLectures();
+                    clean = list_of_lectures_names.get(listIndex);
                     //clean = list_of_lectures_names.get(listIndex).toString();
                     l_date = clean.substring(6,15).replaceAll("[\\[\"]","");
                     l_num = clean.substring(2, 4).replaceAll("[\\[\"]","");
