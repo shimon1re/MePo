@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.view.View;
 import android.widget.Toast;
 
 import static com.example.android.mepo.MyWiFiActivity.isGroupOwner;
@@ -50,10 +51,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                 // Wifi P2P is enabled
-                Toast.makeText(context, "Wifi is ON", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Wifi is ON", Toast.LENGTH_SHORT).show();
                 mActivity.btnOnOff.setText("Wifi: ON");
+                mActivity.btnOnOff.setVisibility(View.INVISIBLE);
             } else {
                 // Wi-Fi P2P is not enabled
+                mActivity.btnOnOff.setVisibility(View.VISIBLE);
                 Toast.makeText(context, "Wifi is OFF", Toast.LENGTH_SHORT).show();
                 //Preform only on teacher
                 if(mActivity.haveGroup == false && mActivity.listView == null) {

@@ -24,6 +24,7 @@ import android.view.ViewDebug;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +67,7 @@ public class MyWiFiActivity extends AppCompatActivity {
     ListView grouplistView;
     TextView read_msg_box;
     TextView connectionStatus;
+    ProgressBar progressBar;
 
     List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
     List<WifiP2pDevice> clients = new ArrayList<WifiP2pDevice>();
@@ -83,7 +85,7 @@ public class MyWiFiActivity extends AppCompatActivity {
     static boolean endButtonPressed = false;
     static boolean studentConnected = false;
     static boolean isGroupOwner;
-    static boolean activityAlreadyCreated = false;
+    final int TIMES_TO_SEARCH = 3;
     String courseT_ID;
     String c_id;
     int l_number;
@@ -122,27 +124,41 @@ public class MyWiFiActivity extends AppCompatActivity {
                 case TASK_COMPLETE:
 
                     read_msg_box.setVisibility(View.VISIBLE);
-                    read_msg_box.setText(currentDate);
+                    //read_msg_box.setText(currentDate);
 
                     if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null && endButtonPressed == false)
                         checkPresence();
-                    else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null &&
-                            !connectionStatus.getText().equals("Client") && numToRestartDiscovery < 5 && studentIsConnect == false) {
-                        resetDiscover();
-                        numToRestartDiscovery++;
-                    }
+
                     else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null && endButtonPressed == true){
                         endStrDate = currentDate;
-                        Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
                         checkPresenceRunnable.cancelTimer();
                         flag = 0;
+                    }
+                    if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null &&
+                            !connectionStatus.getText().equals("Connected") && numToRestartDiscovery < TIMES_TO_SEARCH && studentIsConnect == false) {
+
+                        resetDiscover();
+                        //endButtonPressed = false;
+                        //checkPresenceRunnable = new CheckPresenceRunnable(MyWiFiActivity.this);
+                        //discoverAndCreateGroup();
+                        //btnDiscover.callOnClick();
+                        System.out.println("1 numToRestartDiscovery: " + numToRestartDiscovery);
+                        numToRestartDiscovery++;
+
+                    }
+                    else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null &&
+                            !connectionStatus.getText().equals("Connected") && numToRestartDiscovery >= TIMES_TO_SEARCH && studentIsConnect == false){
+                        progressBar.setVisibility(View.INVISIBLE);
+                        read_msg_box.setText("Teacher not found, try again");
+                        System.out.println("2 numToRestartDiscovery: " + numToRestartDiscovery);
                     }
                     break;
 
                 case TASK_TERMINATED:
 
                     Toast.makeText(getApplicationContext(), "Due to inactivity of 5 hours the registration has been discontinued.", Toast.LENGTH_SHORT).show();
-                    onBtnEndClick();
+                    onBtnEndClick(1);
                     break;
 
                 default:
@@ -180,7 +196,7 @@ public class MyWiFiActivity extends AppCompatActivity {
         //activityAlreadyCreated = true;
         System.out.println("initWork");
         list_of_students_in_course = getIntent().getStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE");
-
+        numToRestartDiscovery = 0;
         btnOnOff = findViewById(R.id.onOff);
         btnDiscover = findViewById(R.id.discover);
         btnEnd = findViewById(R.id.endButton);
@@ -188,7 +204,9 @@ public class MyWiFiActivity extends AppCompatActivity {
         if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
             c_id = getIntent().getStringExtra("EXTRA_STUDENT_COURSE_NAME_ID").substring(7,10);
             listView = findViewById(R.id.peerListView);
+            listView.setVisibility(View.INVISIBLE);
             isGroupOwner = false;
+            progressBar = findViewById(R.id.pb_loading_indicator);
         }
         if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
             c_id = getIntent().getStringExtra("EXTRA_TEACHER_COURSE_NAME_ID");
@@ -244,10 +262,12 @@ public class MyWiFiActivity extends AppCompatActivity {
         btnOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (!wifiManager.isWifiEnabled()) {
                     wifiManager.setWifiEnabled(true);
                     //btnOnOff.setText("ON");
                 }
+
             }
         });
 
@@ -256,6 +276,7 @@ public class MyWiFiActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 System.out.println("Discover");
+                read_msg_box.setText("");
                 numToRestartDiscovery = 0;
                 //if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null)
 
@@ -285,7 +306,7 @@ public class MyWiFiActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                onBtnEndClick();
+                onBtnEndClick(0);
 
             }
         });
@@ -293,11 +314,14 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
-    public void onBtnEndClick(){
+    public void onBtnEndClick(int zeroForBtn){
         endButtonPressed = true;
-        if(!connectionStatus.getText().equals("Device Disconnected")) {
-            Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
-            checkPresenceRunnable.cancelTimer();
+        if(!connectionStatus.getText().equals("Device Disconnected") || zeroForBtn==0) {
+            //Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.INVISIBLE);
+            read_msg_box.setText("");
+            if(checkPresenceRunnable!=null)
+                checkPresenceRunnable.cancelTimer();
             if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
                 mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
                     @Override
@@ -338,7 +362,10 @@ public class MyWiFiActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Connected to: " + deviceNameArray[0], Toast.LENGTH_SHORT).show();
                     studentIsConnect = true;
                     numToRestartDiscovery=0;
-                    connectionStatus.setText("Client");
+                    //connectionStatus.setText("Connected to :" + deviceNameArray[0]);
+                    read_msg_box.setText("Connected to :" + deviceNameArray[0]);
+                    progressBar.setVisibility(View.INVISIBLE);
+                    //listView.setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -368,7 +395,6 @@ public class MyWiFiActivity extends AppCompatActivity {
                         haveGroup = true;
                         endStrDate = null;
 
-                        System.out.println("init stdStatusCountMap");
                         stdStatusCountMap = new HashMap<>();
                         int[] statusCount =new int[1];
                         statusCount[0] = 0;
@@ -392,16 +418,16 @@ public class MyWiFiActivity extends AppCompatActivity {
                 });
             }
             else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null ){
-                /**To discover peers that are available to connect to, call discoverPeers() to detect
-                 *  available peers that are in range. The call to this function is asynchronous and a
-                 *  success or failure is communicated to your application with onSuccess() and onFailure()*/
+
                 mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
                     @Override
-                    /**This method only notifies that the discovery process succeeded and does not
-                     *  provide any information about the actual peers that it discovered, if any*/
-                    public void onSuccess() {
-                        Toast.makeText(getApplicationContext(), "Discovery Started...", Toast.LENGTH_LONG).show();
 
+                    public void onSuccess() {
+                        //Toast.makeText(getApplicationContext(), "Searching ...", Toast.LENGTH_LONG).show();
+                        read_msg_box.setText("Searching...");
+                        progressBar.setVisibility(View.VISIBLE);
+                        listView.setVisibility(View.INVISIBLE);
+                        btnEnd.setVisibility(View.VISIBLE);
                     }
 
                     @Override
@@ -413,9 +439,7 @@ public class MyWiFiActivity extends AppCompatActivity {
 
                     }
                 });
-                /**If the discovery process succeeds and detects peers, the system broadcasts the
-                 *  WIFI_P2P_PEERS_CHANGED_ACTION intent, which you can listen for in a
-                 *  broadcast receiver to obtain a list of peers.*/
+
             }
         }
         else{
@@ -449,7 +473,7 @@ public class MyWiFiActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
 
-                Toast.makeText(getApplicationContext(), "Group Removed", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Group Removed", Toast.LENGTH_SHORT).show();
                 haveGroup = false;
                 //clients.clear();
                 if (SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null ){
@@ -1051,19 +1075,10 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
     public void resetDiscover(){
-        if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null)
-            mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
-                @Override
-                public void onSuccess() {
 
-                }
+        //checkPresenceRunnable = new CheckPresenceRunnable(MyWiFiActivity.this);
 
-                @Override
-                public void onFailure(int reason) {
-
-                }
-            });
-        removeGroup();
+        endButtonPressed = false;
         discoverAndCreateGroup();
     }
 
@@ -1112,6 +1127,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                                 if (studentConnected == false && SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
 
                                     connectToTeacherGroup(0);
+                                    read_msg_box.setText("Connected to: " + deviceNameArray[0]);
                                 }
                             }
                         }
@@ -1244,7 +1260,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                 if(endButtonPressed == false && studentConnected==true){
                     //removeGroup();
                     studentConnected = false;
-                    numToRestartDiscovery = 0;
+                    //numToRestartDiscovery = 0;
 
                     checkPresenceRunnable = new CheckPresenceRunnable(MyWiFiActivity.this);
 
@@ -1252,7 +1268,8 @@ public class MyWiFiActivity extends AppCompatActivity {
                 }
                 else {
                     studentConnected = false;
-                    btnEnd.setVisibility(View.INVISIBLE);
+                    if(!read_msg_box.getText().equals("Searching..."))
+                        btnEnd.setVisibility(View.INVISIBLE);
                     btnDiscover.setVisibility(View.VISIBLE);
                 }
 
@@ -1279,7 +1296,7 @@ public class MyWiFiActivity extends AppCompatActivity {
 
             }else if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner == false) {
                 btnEnd.setVisibility(View.VISIBLE);
-                connectionStatus.setText("Client");
+                //connectionStatus.setText("Connected to :" + deviceNameArray[0]);
                 if(deviceNameArray == null) {
                     // set the t_id for the student listView
                     resetListView(2);
@@ -1287,7 +1304,7 @@ public class MyWiFiActivity extends AppCompatActivity {
 
             }
 
-            Toast.makeText(getApplicationContext(),connectionStatus.getText() , Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),connectionStatus.getText() , Toast.LENGTH_SHORT).show();
         }
     };
 
