@@ -33,6 +33,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -192,7 +193,7 @@ public class MyWiFiActivity extends AppCompatActivity {
         if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
             c_id = getIntent().getStringExtra("EXTRA_TEACHER_COURSE_NAME_ID");
             c_id = c_id.substring(c_id.length()-5,c_id.length()-2);
-            l_number = getIntent().getIntExtra("EXTRA_LECTURE_NUMBER",l_number) + 1;
+            //l_number = getIntent().getIntExtra("EXTRA_LECTURE_NUMBER",l_number) ;
             grouplistView = findViewById(R.id.peerListView);
             isGroupOwner = true;
         }
@@ -297,7 +298,7 @@ public class MyWiFiActivity extends AppCompatActivity {
         if(!connectionStatus.getText().equals("Device Disconnected")) {
             Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
             checkPresenceRunnable.cancelTimer();
-            if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null)
+            if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
                 mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
                     @Override
                     public void onSuccess() {
@@ -309,9 +310,10 @@ public class MyWiFiActivity extends AppCompatActivity {
 
                     }
                 });
-            studentIsConnect = false;
-            numToRestartDiscovery = 0;
-            removeGroup();
+                studentIsConnect = false;
+                numToRestartDiscovery = 0;
+                removeGroup();
+            }
         }
         if(checkPresenceRunnable != null && SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
             endStrDate = currentDate;
@@ -625,7 +627,8 @@ public class MyWiFiActivity extends AppCompatActivity {
 
                 //call the function that report to DB
                 //here because endStrDate != null
-                reportStudentsPresence(numOfCheckBeats);
+                getMaxLecture(numOfCheckBeats);
+                //reportStudentsPresence(numOfCheckBeats);
 
             }
         }
@@ -896,7 +899,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                                     //If there is no error message in the JSON string
                                     if (!jsonObject.getBoolean("error")) {
                                         // NO NEED TO GET JASON ERROR
-
+                                        removeGroup();
 
                                     } else {
                                         Toast.makeText(
@@ -942,6 +945,89 @@ public class MyWiFiActivity extends AppCompatActivity {
         RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
 
     }
+
+
+
+
+
+
+
+    public void getMaxLecture(float numOfCheckBeats) {
+
+        //mProgressBar.setVisibility(View.VISIBLE);
+        final float beats = numOfCheckBeats;
+
+        StringRequest stringRequest = new StringRequest
+                (Request.Method.POST, Constants.URL_T_ACTIVITY,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                //mProgressBar.setVisibility(View.INVISIBLE);
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+
+                                    if (!jsonObject.getBoolean("error")) {
+                                        JSONArray maxLec = jsonObject.getJSONArray("l_details");
+                                        int max = 0;
+                                        for(int i=0; i< maxLec.length(); i++){
+                                            int temp = Integer.valueOf(maxLec.get(i).toString().replaceAll("[^\\d.]", ""));
+                                            if(max <= temp)
+                                                max = temp;
+                                        }
+                                        l_number = max;
+                                        l_number = l_number+1;
+                                        System.out.println("==== "+l_number);
+
+
+                                        reportStudentsPresence(beats);
+
+
+
+                                    } else {
+                                        Toast.makeText(
+                                                getApplicationContext(),
+                                                jsonObject.getString("message"),
+                                                Toast.LENGTH_LONG
+                                        ).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                //mProgressBar.setVisibility(View.INVISIBLE);
+                                Toast.makeText(
+                                        getApplicationContext(),
+                                        "Connection failed, Please try again",
+                                        Toast.LENGTH_LONG
+                                ).show();
+
+                            }
+                        }) {
+
+            //Push parameters to Request.Method.POST
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+
+                params.put("cc_id", c_id);
+
+
+
+                return params;
+            }
+        };
+
+        //Making a connection by singleton class to the database with stringRequest
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+
+    }
+
 
 
 

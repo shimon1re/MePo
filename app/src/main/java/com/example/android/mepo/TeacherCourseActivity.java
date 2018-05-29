@@ -317,8 +317,13 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
 
         if (v == mBtn_start) {// =-====Add new lecture======
 
-            getMaxLecture();
+            //getMaxLecture();
 
+            Intent intent = new Intent(getApplication(), MyWiFiActivity.class);
+            intent.putStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE",list_of_students_in_course);
+            intent.putExtra("EXTRA_TEACHER_COURSE_NAME_ID",COURSE_NAME_ID);
+            //intent.putExtra("EXTRA_LECTURE_NUMBER",intMaxLectureNumber);
+            startActivity(intent);
 
 
 

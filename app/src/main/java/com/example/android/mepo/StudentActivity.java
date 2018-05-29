@@ -59,7 +59,7 @@ public class StudentActivity extends AppCompatActivity
     public void initComponnents(){
 
         mTvUserWelcome = findViewById(R.id.tv_hello_user);
-        mTvUserWelcome.setText("Hi " + SharedPrefManager.getInstance(this).getUserFName() + " select a course:");
+        mTvUserWelcome.setText("Hey " + SharedPrefManager.getInstance(this).getUserFName() + "," + " select course");
 
         STUDENT_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_STUDENT_COURSES_SIZE",0);
 
