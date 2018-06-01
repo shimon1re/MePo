@@ -169,6 +169,7 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
                                                 jsonObject.getString("message"),
                                                 Toast.LENGTH_LONG
                                         ).show();
+                                        finish();
 
                                     }else{
                                         Toast.makeText(

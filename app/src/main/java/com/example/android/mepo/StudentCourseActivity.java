@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -31,6 +32,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
 
     private Button mBtn_prev_lectures,mBtn_start;
     private ProgressBar mProgressBar;
+    private TextView tv_courseName;
     private String COURSE_NAME_ID, BACKCOURSE_NAME_ID;
     private String t_idOfCourse, c_id;
     WifiManager wifiManager;
@@ -74,7 +76,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
         IsStudentCourseActivity = null;
         mBtn_start = findViewById(R.id.btn_start);
         mBtn_prev_lectures = findViewById(R.id.btn_previous_lectures);
-
+        tv_courseName = findViewById(R.id.tv_courseName);
         mBtn_prev_lectures.setOnClickListener(this);
         mBtn_start.setOnClickListener(this);
 
@@ -82,6 +84,7 @@ public class StudentCourseActivity extends AppCompatActivity implements View.OnC
 
         COURSE_NAME_ID =  getIntent().getStringExtra("EXTRA_STUDENT_COURSE_NAME_ID");
         System.out.println("COURSE_NAME_ID " + COURSE_NAME_ID);
+        tv_courseName.setText(COURSE_NAME_ID.substring(2,COURSE_NAME_ID.length()-16));
         c_id = COURSE_NAME_ID;
         t_idOfCourse = COURSE_NAME_ID.substring(COURSE_NAME_ID.length()-7,COURSE_NAME_ID.length()-2);
     }

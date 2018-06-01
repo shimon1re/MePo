@@ -1,13 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp">
 
+    <ImageView
+        android:id="@+id/iv_arrived"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="250dp"
+        app:srcCompat="@drawable/checke" />
+    <ImageView
+        android:id="@+id/iv_missed"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="250dp"
+        app:srcCompat="@drawable/cancel" />
+    <ImageView
+        android:id="@+id/iv_approved"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="250dp"
+        app:srcCompat="@drawable/approveicon" />
 
     <TextView
         android:id="@+id/tv_item_number"
+        android:textColor="@color/colorPrimary"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,52 +38,57 @@
 
     <TextView
         android:id="@+id/tv_student_activity_item_number"
+        android:textColor="@color/colorPrimary"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|start"
-        android:fontFamily="monospace"
-        android:textSize="28sp"
+        android:fontFamily="casual"
+        android:textSize="35sp"
         tools:text="#42" />
 
     <TextView
         android:id="@+id/tv_student_course_item_number"
+        android:textColor="@color/colorPrimary"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|start"
-        android:fontFamily="monospace"
-        android:textSize="20sp"
+        android:fontFamily="casual"
+        android:textSize="24sp"
         tools:text="#42" />
 
     <TextView
         android:id="@+id/tv_teacher_activity_item_number"
+        android:textColor="@color/colorPrimary"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|start"
-        android:fontFamily="monospace"
-        android:textSize="28sp"
+        android:fontFamily="casual"
+        android:textSize="35sp"
         tools:text="#42" />
 
 
     <TextView
         android:id="@+id/tv_teacher_course_item_number"
+        android:textColor="@color/colorPrimary"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|start"
-        android:fontFamily="monospace"
-        android:textSize="20sp"
+        android:fontFamily="casual"
+        android:textSize="25sp"
         tools:text="#42" />
 
     <TextView
         android:id="@+id/tv_teacher_lectures_item_number"
+        android:textColor="@color/colorPrimary"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|start"
-        android:fontFamily="monospace"
+        android:fontFamily="casual"
         android:textSize="20sp"
         tools:text="#42" />
 </FrameLayout>

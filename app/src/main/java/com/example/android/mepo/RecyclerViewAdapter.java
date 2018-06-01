@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -96,6 +97,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         // Will display the position in the list, ie 0 through getItemCount() - 1
         TextView teacherListItemNumberView,studentListItemNumberView,studentCourseListItemNumberView
                 ,teacherCourseListItemNumberView,teacherLecturesListItemNumberView;
+        ImageView arrived, missed, approved;
 
 
 
@@ -108,6 +110,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
          */
         public NumberViewHolder(View itemView) {
             super(itemView);
+
             if(IsStudent == null){
                 if(IsTeacherCourseActivity == null) {
                     teacherListItemNumberView = itemView.findViewById(R.id.tv_teacher_activity_item_number);
@@ -141,14 +144,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
          * @param listIndex Position of the item in the list
          */
         void bind(int listIndex) {
+            arrived = itemView.findViewById(R.id.iv_arrived);
+            missed = itemView.findViewById(R.id.iv_missed);
+            approved = itemView.findViewById(R.id.iv_approved);
+            arrived.setVisibility(View.INVISIBLE);
+            missed.setVisibility(View.INVISIBLE);
+            approved.setVisibility(View.INVISIBLE);
 
             if(IsStudent == null) {
+                arrived.setVisibility(View.INVISIBLE);
+                missed.setVisibility(View.INVISIBLE);
+                approved.setVisibility(View.INVISIBLE);
+
                 if(IsTeacherCourseActivity == null) {
                     String clean;
                     ArrayList<String> list_of_courses_names = getList_of_teacher_courses_names();
                     clean = list_of_courses_names.get(listIndex).toString().replaceAll("[\\[\"\\],-]", "");
                     clean = clean.replaceAll("[0-9]","");
-                    teacherListItemNumberView.setText("Course: " + clean);
+                    teacherListItemNumberView.setText(clean);
                 }
                 else{
                     if(IsTeacherLecturesActivity !=null){
@@ -168,18 +181,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         clean = list_of_lectures_names.get(listIndex);
                         l_date = clean.substring(6,15).replaceAll("[\\[\"]","");
                         l_num = clean.substring(2, 4).replaceAll("[\\[\"]","");
-                        teacherCourseListItemNumberView.setText("Lecture " + l_num + ": " + l_date);
+                        teacherCourseListItemNumberView.setText("Lec " + l_num + " : " + l_date);
                     }
                 }
             }
             else{
                 if(IsStudentCourseActivity == null){
+                    arrived.setVisibility(View.INVISIBLE);
+                    missed.setVisibility(View.INVISIBLE);
                     String clean;
                     ArrayList<String> list_of_courses_names = getList_of_student_courses_names();
                     clean = list_of_courses_names.get(listIndex).toString();
                     clean = clean.replaceAll("[0-9]","");
                     clean = clean.replaceAll("[\\[\"\\],-]", "");
-                    studentListItemNumberView.setText("Course: " + clean);
+                    studentListItemNumberView.setText(clean);
                 }
                 else {
                     String clean,l_date,l_num,l_status;
@@ -190,7 +205,25 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     l_date = clean.substring(6,15).replaceAll("[\\[\"]","");
                     l_num = clean.substring(2, 4).replaceAll("[\\[\"]","");
                     l_status = clean.substring(clean.length()-10,clean.length()-2).replaceAll("[\\[\"\\,]","").replaceAll("[0-9]","");
-                    studentCourseListItemNumberView.setText("Lecture "+ l_num + ": "+ l_date + " " + l_status);
+                    if(l_status.equals("Arrived")) {
+                        studentCourseListItemNumberView.setText("Lec " + l_num + " : " + l_date);
+                        arrived.setVisibility(View.VISIBLE);
+                        missed.setVisibility(View.INVISIBLE);
+                        approved.setVisibility(View.INVISIBLE);
+                    }
+                    if(l_status.equals("Missed")) {
+                        studentCourseListItemNumberView.setText("Lec " + l_num + ": " + l_date);
+                        missed.setVisibility(View.VISIBLE);
+                        arrived.setVisibility(View.INVISIBLE);
+                        approved.setVisibility(View.INVISIBLE);
+                    }
+                    if(l_status.equals("Approved")) {
+                        studentCourseListItemNumberView.setText("Lec " + l_num + ": " + l_date);
+                        approved.setVisibility(View.VISIBLE);
+                        arrived.setVisibility(View.INVISIBLE);
+                        missed.setVisibility(View.INVISIBLE);
+                    }
+                    //studentCourseListItemNumberView.setText("Lec "+ l_num + ": "+ l_date + " " + l_status);
                 }
             }
 

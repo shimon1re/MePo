@@ -22,7 +22,7 @@ public class StudentCoursePrevLecActivity extends AppCompatActivity
     //References to RecyclerView and Adapter
     private RecyclerViewAdapter mAdapter;
     private RecyclerView mNumbersListRecycler;
-    private ProgressBar mProgressBar;
+    //private ProgressBar mProgressBar;
     private Toast mToast;
     //private TextView mTvUserWelcome;
     public static ArrayList<String> list_of_lectures = new ArrayList<String>();
@@ -36,7 +36,7 @@ public class StudentCoursePrevLecActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_course_prevlec);
 
-        mProgressBar = findViewById(R.id.pb_loading_indicator);
+        //mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         COURSE_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_COURSE_LECTURES_SIZE",0);
 

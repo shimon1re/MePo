@@ -40,6 +40,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
 
     private Button mBtn_prev_lectures, mBtn_start, mBtn_send_report;
     private ProgressBar mProgressBar;
+    private TextView tv_courseName;
     private String COURSE_NAME_ID;
     public static String IsTeacherCourseActivity;
     WifiManager wifiManager;
@@ -78,6 +79,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
         mBtn_start = findViewById(R.id.btn_start);
         mBtn_prev_lectures = findViewById(R.id.btn_previous_lectures);
         mBtn_send_report = findViewById(R.id.btn_send_report);
+        tv_courseName = findViewById(R.id.tv_courseName);
 
         mBtn_start.setOnClickListener(this);
         mBtn_send_report.setOnClickListener(this);
@@ -86,6 +88,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         COURSE_NAME_ID = getIntent().getStringExtra("EXTRA_TEACHER_COURSE_NAME_ID");
+        tv_courseName.setText(COURSE_NAME_ID.substring(2,COURSE_NAME_ID.length()-8));
         c_id = COURSE_NAME_ID;
         c_id = c_id.replaceAll("[A-z]", "");
         c_id = c_id.replaceAll("[\\[\"\\],-]", "");
