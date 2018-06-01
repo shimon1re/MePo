@@ -318,11 +318,12 @@ public class MyWiFiActivity extends AppCompatActivity {
         endButtonPressed = true;
         if(!connectionStatus.getText().equals("Device Disconnected") || zeroForBtn==0) {
             //Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
-            progressBar.setVisibility(View.INVISIBLE);
+            //progressBar.setVisibility(View.INVISIBLE);
             read_msg_box.setText("");
             if(checkPresenceRunnable!=null)
                 checkPresenceRunnable.cancelTimer();
             if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
+                progressBar.setVisibility(View.INVISIBLE);
                 mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
                     @Override
                     public void onSuccess() {
