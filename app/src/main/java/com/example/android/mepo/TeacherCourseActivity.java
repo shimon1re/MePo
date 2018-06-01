@@ -205,27 +205,7 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
                             public void onResponse(String response) {
 
                                 mProgressBar.setVisibility(View.INVISIBLE);
-                                /*try {
-                                    JSONObject jsonObject = new JSONObject(response);
-                                    //If there is no error message in the JSON string
-                                    if (!jsonObject.getBoolean("error")) {
-                                        Toast.makeText(
-                                                getApplicationContext(),
-                                                jsonObject.getString("message"),
-                                                Toast.LENGTH_LONG
-                                        ).show();
 
-                                    } else {
-                                        Toast.makeText(
-                                                getApplicationContext(),
-                                                jsonObject.getString("message"),
-                                                Toast.LENGTH_LONG
-                                        ).show();
-                                    }
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }*/
                             }
                         },
                         new Response.ErrorListener() {
@@ -313,7 +293,6 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
                     dialog.dismiss();
                 }
             });
-            //sendCourseReport();
         }
 
 

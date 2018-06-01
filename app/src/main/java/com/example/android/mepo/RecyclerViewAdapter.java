@@ -165,12 +165,30 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 }
                 else{
                     if(IsTeacherLecturesActivity !=null){
-                        String clean;
+                        String clean, status;
                         ArrayList<String> list_of_lectures_names = getListOfStudentInLectures();
                         clean = list_of_lectures_names.get(listIndex).toString();
+                        status = clean.substring(clean.length()-10,clean.length()-2).replaceAll("[\\[\"\\],-]", "");
+                        clean = clean.substring(1,clean.length()-10);
+                        System.out.println("status : " + status);
                         clean = clean.replaceAll("[\\[\"\\]-]", "");
                         clean = clean.replaceAll("[\\[\"\\],-]", " ");
                         teacherLecturesListItemNumberView.setText(clean);
+                        if(status.equals("Arrived")) {
+                            arrived.setVisibility(View.VISIBLE);
+                            missed.setVisibility(View.INVISIBLE);
+                            approved.setVisibility(View.INVISIBLE);
+                        }
+                        if(status.equals("Missed")) {
+                            missed.setVisibility(View.VISIBLE);
+                            arrived.setVisibility(View.INVISIBLE);
+                            approved.setVisibility(View.INVISIBLE);
+                        }
+                        if(status.equals("Approved")) {
+                            approved.setVisibility(View.VISIBLE);
+                            arrived.setVisibility(View.INVISIBLE);
+                            missed.setVisibility(View.INVISIBLE);
+                        }
                     }
                     else {
                         IsTeacherLecturesActivity = null;

@@ -1,6 +1,7 @@
 package com.example.android.mepo;
 
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -29,7 +31,7 @@ import static com.example.android.mepo.TeacherCoursePrevLecActivity.IsTeacherLec
 
 
 public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
-        implements RecyclerViewAdapter.ListItemClickListener{
+        implements RecyclerViewAdapter.ListItemClickListener, View.OnClickListener{
 
 
     public int STUDENTS_NUM_LIST_ITEMS ;
@@ -60,12 +62,8 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
         STUDENTS_NUM_LIST_ITEMS =  getIntent().getIntExtra("EXTRA_LECTURES_DETAILS_SIZE",0);
         l_id = getIntent().getStringExtra("l_id");
         c_id = getIntent().getStringExtra("c_id");
-        delLecButt = (Button) findViewById(R.id.delLecButt);
-        delLecButt.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                deleteLec();
-            }
-        });
+        delLecButt = findViewById(R.id.delLecButt);
+        delLecButt.setOnClickListener(this);
         list_of_students = getIntent().getStringArrayListExtra("EXTRA_LECTURES_DETAILS");
         System.out.println("check2" + list_of_students);
         course_list  = getIntent().getStringArrayListExtra("COURSE_LIST");
@@ -212,6 +210,42 @@ public class TeacherCoursePrevLecDetailsActivity extends AppCompatActivity
         RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
 
     }
+
+
+
+
+    @Override
+    public void onClick(View v){
+        if(v == delLecButt){
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+            View mView = getLayoutInflater().inflate(R.layout.dialog_export_report, null);
+            TextView mText = mView.findViewById(R.id.txt_exportreport);
+            mText.setText("Are you sure you want to delete the lecture?");
+            Button mBtnOk = mView.findViewById(R.id.btn_ok);
+            Button mBtnCancel = mView.findViewById(R.id.btn_cancel);
+
+            mBuilder.setView(mView);
+            final AlertDialog dialog = mBuilder.create();
+            dialog.show();
+
+            mBtnOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    deleteLec();
+                    /*Toast.makeText(getApplicationContext(), "The report has been sent to the department",
+                            Toast.LENGTH_SHORT).show();*/
+                    dialog.dismiss();
+                }
+            });
+            mBtnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+        }
+    }
+
 
     @Override
     public void onBackPressed() {

@@ -37,9 +37,9 @@ public class ChangeUserStatus extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_user_status);
-        missButt = (Button) findViewById(R.id.missBut);
-        approveButt = (Button) findViewById(R.id.approveBut);
-        arriveBut = (Button) findViewById(R.id.arriveBut);
+        missButt = findViewById(R.id.missBut);
+        approveButt = findViewById(R.id.approveBut);
+        arriveBut = findViewById(R.id.arriveBut);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             S_ID = extras.getString("S_ID");
@@ -55,8 +55,6 @@ public class ChangeUserStatus extends AppCompatActivity {
                 System.out.println("======"+S_ID);
                 System.out.println("======"+newStatus);
                 sendPost();
-                Toast.makeText(getApplicationContext(),"DONE !",
-                        Toast.LENGTH_SHORT).show();
                 finish();
 
 
@@ -72,8 +70,6 @@ public class ChangeUserStatus extends AppCompatActivity {
                 System.out.println("======"+S_ID);
                 System.out.println("======"+newStatus);
                 sendPost();
-                Toast.makeText(getApplicationContext(),"DONE !",
-                        Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
@@ -88,10 +84,6 @@ public class ChangeUserStatus extends AppCompatActivity {
                 System.out.println("======"+S_ID);
                 System.out.println("======"+newStatus);
                 sendPost();
-                Toast.makeText(getApplicationContext(),"DONE !",
-                        Toast.LENGTH_SHORT).show();
-                //Intent thirdActivity = new Intent(ChangeUserStatus.this,TeacherCoursePrevLecDetailsActivity.class);
-                //startActivity(thirdActivity);
                 finish();
 
             }

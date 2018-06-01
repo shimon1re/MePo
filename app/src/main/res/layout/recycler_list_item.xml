@@ -11,19 +11,19 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="250dp"
-        app:srcCompat="@drawable/checke" />
+        app:srcCompat="@drawable/check2" />
     <ImageView
         android:id="@+id/iv_missed"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="250dp"
-        app:srcCompat="@drawable/cancel" />
+        app:srcCompat="@drawable/cancel"/>
     <ImageView
         android:id="@+id/iv_approved"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="250dp"
-        app:srcCompat="@drawable/approveicon" />
+        app:srcCompat="@drawable/approveicon"/>
 
     <TextView
         android:id="@+id/tv_item_number"
