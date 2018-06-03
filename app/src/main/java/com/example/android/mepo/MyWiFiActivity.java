@@ -3,7 +3,7 @@ package com.example.android.mepo;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -15,12 +15,11 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewDebug;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -41,18 +40,16 @@ import org.json.JSONObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.android.mepo.TeacherCourseActivity.getmBtn_start_toResume;
+import static com.example.android.mepo.TeacherCourseActivity.setmBtn_start_toResume;
 
 
-
-public class MyWiFiActivity extends AppCompatActivity {
+public class MyWiFiActivity extends AppCompatActivity implements View.OnClickListener{
 
     WifiManager wifiManager;
     WifiP2pManager mManager;
@@ -85,6 +82,7 @@ public class MyWiFiActivity extends AppCompatActivity {
     static boolean endButtonPressed = false;
     static boolean studentConnected = false;
     static boolean isGroupOwner;
+    boolean backIsPressed = false;
     final int TIMES_TO_SEARCH = 3;
     String courseT_ID;
     String c_id;
@@ -92,7 +90,7 @@ public class MyWiFiActivity extends AppCompatActivity {
     ArrayList<String> list_of_students_in_course = new ArrayList<String>();
 
     private CheckPresenceRunnable checkPresenceRunnable;
-    private static int flag = 0 ;
+    private static int dateFlag = 0 ;
     private int numToRestartDiscovery = 0;
     boolean studentIsConnect = false;
     private  static String startStrDate, endStrDate;
@@ -113,9 +111,9 @@ public class MyWiFiActivity extends AppCompatActivity {
             checkPresenceRunnable = (CheckPresenceRunnable) inputMessage.obj;
             //תאריך וזמן להתחלת הרצאה
             currentDate = checkPresenceRunnable.strDate;
-            if(flag == 0) {
+            if(dateFlag == 0) {
                 startStrDate = currentDate;
-                flag = 1;
+                dateFlag = 1;
             }
 
             switch (inputMessage.what) {
@@ -133,7 +131,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                         endStrDate = currentDate;
                         //Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
                         checkPresenceRunnable.cancelTimer();
-                        flag = 0;
+                        dateFlag = 0;
                     }
                     if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null &&
                             !connectionStatus.getText().equals("Connected") && numToRestartDiscovery < TIMES_TO_SEARCH && studentIsConnect == false) {
@@ -197,9 +195,11 @@ public class MyWiFiActivity extends AppCompatActivity {
         System.out.println("initWork");
         list_of_students_in_course = getIntent().getStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE");
         numToRestartDiscovery = 0;
+        endButtonPressed = false;
         btnOnOff = findViewById(R.id.onOff);
         btnDiscover = findViewById(R.id.discover);
         btnEnd = findViewById(R.id.endButton);
+        btnEnd.setOnClickListener(this);
 
         if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
             c_id = getIntent().getStringExtra("EXTRA_STUDENT_COURSE_NAME_ID").substring(7,10);
@@ -214,6 +214,7 @@ public class MyWiFiActivity extends AppCompatActivity {
             //l_number = getIntent().getIntExtra("EXTRA_LECTURE_NUMBER",l_number) ;
             grouplistView = findViewById(R.id.peerListView);
             isGroupOwner = true;
+            btnDiscover.setVisibility(View.INVISIBLE);
         }
 
         courseT_ID =  getIntent().getStringExtra("EXTRA_TEACHER_ID");
@@ -302,15 +303,10 @@ public class MyWiFiActivity extends AppCompatActivity {
         }*/
 
 
-        btnEnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                onBtnEndClick(0);
-
-            }
-        });
     }
+
+
 
 
 
@@ -342,11 +338,43 @@ public class MyWiFiActivity extends AppCompatActivity {
         }
         if(checkPresenceRunnable != null && SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
             endStrDate = currentDate;
-            flag = 0;
-            checkPresence();
+            dateFlag = 0;
+
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+            View mView = getLayoutInflater().inflate(R.layout.dialog_export_report, null);
+            TextView mText = mView.findViewById(R.id.txt_exportreport);
+            mText.setText("Do you want to save the lecture details?");
+            Button mBtnOk = mView.findViewById(R.id.btn_ok);
+            Button mBtnCancel = mView.findViewById(R.id.btn_cancel);
+
+            mBuilder.setView(mView);
+            final AlertDialog dialog = mBuilder.create();
+            dialog.show();
+
+            mBtnOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getMaxLecture();
+                    //checkPresence();
+                    /*Toast.makeText(getApplicationContext(), "The report has been sent to the department",
+                            Toast.LENGTH_SHORT).show();*/
+                    dialog.dismiss();
+                }
+            });
+            mBtnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    removeGroup();
+                    dialog.dismiss();
+                }
+            });
+
         }
         
     }
+
+
+
 
 
 
@@ -386,17 +414,20 @@ public class MyWiFiActivity extends AppCompatActivity {
 
         if(mManager != null && wifiManager.isWifiEnabled()) {
             if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null &&
-                    (!connectionStatus.getText().equals("Host") && haveGroup == false) /*&& !connectionStatus.getText().equals("Connected"))*/ /**/) {
+                    (!connectionStatus.getText().equals("Connected") && haveGroup == false) /*&& !connectionStatus.getText().equals("Connected"))*/ /**/) {
 
                 mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
                     @Override
                     public void onSuccess() {
                         // Device is ready to accept incoming connections from peers.
-                        Toast.makeText(getApplicationContext(), "Group Created" , Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Group Created" , Toast.LENGTH_SHORT).show();
                         haveGroup = true;
                         endStrDate = null;
 
-                        stdStatusCountMap = new HashMap<>();
+                        setmBtn_start_toResume(1);
+
+                        /*stdStatusCountMap = new HashMap<>();
+                        System.out.println("AAAAAAAAAAAAAAAAAAAAAAA");
                         int[] statusCount =new int[1];
                         statusCount[0] = 0;
                         String clean;
@@ -406,7 +437,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                                 clean = clean.replaceAll("[\\[\"\\],-]", "");
                                 stdStatusCountMap.put(clean, statusCount);
                             }
-                        }
+                        }*/
                     }
 
                     @Override
@@ -473,7 +504,7 @@ public class MyWiFiActivity extends AppCompatActivity {
         mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-
+                setmBtn_start_toResume(0);
                 //Toast.makeText(getApplicationContext(), "Group Removed", Toast.LENGTH_SHORT).show();
                 haveGroup = false;
                 //clients.clear();
@@ -488,6 +519,8 @@ public class MyWiFiActivity extends AppCompatActivity {
                     resetListView(0);
                     studentConnected = false;
                 }
+                //if(backIsPressed == true)
+                  //  MyWiFiActivity.super.onBackPressed();
             }
 
             @Override
@@ -652,15 +685,16 @@ public class MyWiFiActivity extends AppCompatActivity {
 
                 //call the function that report to DB
                 //here because endStrDate != null
-                getMaxLecture(numOfCheckBeats);
-                //reportStudentsPresence(numOfCheckBeats);
+                //getMaxLecture(numOfCheckBeats);
+
+                reportStudentsPresence(numOfCheckBeats);
 
             }
         }
 
 
 
-        if(stdStatusCountMap == null){
+        if(stdStatusCountMap == null /*&& !getmBtn_start_toResume()*/){
             System.out.println("init stdStatusCountMap");
             stdStatusCountMap = new HashMap<>();
             int[] statusCount =new int[1];
@@ -687,8 +721,11 @@ public class MyWiFiActivity extends AppCompatActivity {
                             int[] appendStatusCount = new int[1];
                             appendStatusCount[0] = stdStatusCountMap.get(stdInCourse)[0];
                             appendStatusCount[0]++;
+                            //stdStatusCountMap.remove(stdInCourse);
                             stdStatusCountMap.put(stdInCourse, appendStatusCount);
+                            System.out.println("stdStatusCountMap " + stdStatusCountMap.toString());
                             System.out.println("stdInCourse: " + stdInCourse + " StatusCount: " + appendStatusCount[0]);
+                            System.out.println("stdInCourse 2: " + stdInCourse + " StatusCount: " + stdStatusCountMap.get(stdInCourse)[0]);
                         }
                     }
                 }
@@ -977,10 +1014,10 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
-    public void getMaxLecture(float numOfCheckBeats) {
+    public void getMaxLecture(/*float numOfCheckBeats*/) {
 
         //mProgressBar.setVisibility(View.VISIBLE);
-        final float beats = numOfCheckBeats;
+        //final float beats = numOfCheckBeats;
 
         StringRequest stringRequest = new StringRequest
                 (Request.Method.POST, Constants.URL_T_ACTIVITY,
@@ -1005,7 +1042,8 @@ public class MyWiFiActivity extends AppCompatActivity {
                                         System.out.println("==== "+l_number);
 
 
-                                        reportStudentsPresence(beats);
+                                        //reportStudentsPresence(beats);
+                                        checkPresence();
 
 
 
@@ -1013,7 +1051,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                                         Toast.makeText(
                                                 getApplicationContext(),
                                                 jsonObject.getString("message"),
-                                                Toast.LENGTH_LONG
+                                                Toast.LENGTH_SHORT
                                         ).show();
                                     }
 
@@ -1031,6 +1069,8 @@ public class MyWiFiActivity extends AppCompatActivity {
                                         "Connection failed, Please try again",
                                         Toast.LENGTH_LONG
                                 ).show();
+
+                                onBtnEndClick(1);
 
                             }
                         }) {
@@ -1086,6 +1126,29 @@ public class MyWiFiActivity extends AppCompatActivity {
 
 
 
+
+
+
+    @Override
+    public void onBackPressed() {
+        if(connectionStatus.getText().equals("Connected")) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Really Exit?")
+                    .setMessage("Are you sure you want to exit?")
+                    .setNegativeButton(android.R.string.no, null)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            //getApplicationContext().super.onBackPressed();
+                            backIsPressed = true;
+                            onBtnEndClick(0);
+
+                        }
+                    }).create().show();
+        }
+        else
+            MyWiFiActivity.super.onBackPressed();
+    }
 
 
 
@@ -1197,7 +1260,7 @@ public class MyWiFiActivity extends AppCompatActivity {
                                 groupDeviceArray[index] = device;
                                 index++;
                                 //System.out.println("index " + index);
-                                connectionStatus.setText("Host");
+                                //connectionStatus.setText("Host");
                                 btnEnd.setVisibility(View.VISIBLE);
                                 //Toast.makeText(getApplicationContext(), "group index " + index, Toast.LENGTH_SHORT).show();
                                 //Toast.makeText(getApplicationContext(), "group Found " + device.deviceName, Toast.LENGTH_SHORT).show();
@@ -1258,7 +1321,7 @@ public class MyWiFiActivity extends AppCompatActivity {
             if(connectionStatus.getText().equals("Device Disconnected") &&
                     SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null){
                 resetListView(0);
-                if(endButtonPressed == false && studentConnected==true){
+                if(endButtonPressed == false /*&& studentConnected==true*/){
                     //removeGroup();
                     studentConnected = false;
                     //numToRestartDiscovery = 0;
@@ -1280,12 +1343,12 @@ public class MyWiFiActivity extends AppCompatActivity {
                 resetListView(1);
                 discoverAndCreateGroup();
                 btnEnd.setVisibility(View.INVISIBLE);
-                btnDiscover.setVisibility(View.INVISIBLE);
+                //btnDiscover.setVisibility(View.INVISIBLE);
             }
             else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null &&
                     connectionStatus.getText().equals("Device Disconnected")){
                 btnEnd.setVisibility(View.INVISIBLE);
-                btnDiscover.setVisibility(View.VISIBLE);
+                //btnDiscover.setVisibility(View.VISIBLE);
             }
 
             if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner && haveGroup == true){
@@ -1332,27 +1395,37 @@ public class MyWiFiActivity extends AppCompatActivity {
         unregisterReceiver(mReceiver);
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v == btnEnd){
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+            View mView = getLayoutInflater().inflate(R.layout.dialog_export_report, null);
+            TextView mText = mView.findViewById(R.id.txt_exportreport);
+            mText.setText("Do you want to finish the lecture?");
+            Button mBtnOk = mView.findViewById(R.id.btn_ok);
+            Button mBtnCancel = mView.findViewById(R.id.btn_cancel);
 
+            mBuilder.setView(mView);
+            final AlertDialog dialog = mBuilder.create();
+            dialog.show();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            mBtnOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onBtnEndClick(0);
+                    /*Toast.makeText(getApplicationContext(), "The report has been sent to the department",
+                            Toast.LENGTH_SHORT).show();*/
+                    dialog.dismiss();
+                }
+            });
+            mBtnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+        }
+    }
 
 
 //////////////////////////////////////////////////////// Thread zone /////////////////////////////////////////////////////////////////

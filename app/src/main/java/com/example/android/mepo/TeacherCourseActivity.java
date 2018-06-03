@@ -38,7 +38,8 @@ import static com.example.android.mepo.TeacherCoursePrevLecActivity.IsTeacherLec
 
 public class TeacherCourseActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button mBtn_prev_lectures, mBtn_start, mBtn_send_report;
+    private Button mBtn_prev_lectures, mBtn_send_report;
+    public static Button mBtn_start;
     private ProgressBar mProgressBar;
     private TextView tv_courseName;
     private String COURSE_NAME_ID;
@@ -59,17 +60,16 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher_course);
-
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (!wifiManager.isWifiEnabled()) {
             wifiManager.setWifiEnabled(true);
+
         }
         if(IsTeacherLecturesActivity != null) {
             IsTeacherCourseActivity = null;
             IsTeacherCourseActivity = "yes";
         }
         IsTeacherLecturesActivity = null;
-
         //check if user logged in or not.
         if (!SharedPrefManager.getInstance(this).isLoggedIn()) {
             finish();
@@ -240,6 +240,22 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
 
 
 
+
+    public static void setmBtn_start_toResume(int one_for_resume){
+        if(one_for_resume ==1)
+            mBtn_start.setText("Resume");
+        else
+            mBtn_start.setText("Start a lecture");
+    }
+
+    public static boolean getmBtn_start_toResume(){
+        return mBtn_start.getText().equals("Resume");
+    }
+
+
+
+
+
     //Responsible for the logout button
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -306,10 +322,6 @@ public class TeacherCourseActivity extends AppCompatActivity implements View.OnC
             intent.putExtra("EXTRA_TEACHER_COURSE_NAME_ID",COURSE_NAME_ID);
             //intent.putExtra("EXTRA_LECTURE_NUMBER",intMaxLectureNumber);
             startActivity(intent);
-
-
-
-
 
 
         }
