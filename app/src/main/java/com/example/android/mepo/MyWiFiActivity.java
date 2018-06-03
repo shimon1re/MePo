@@ -149,6 +149,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                             !connectionStatus.getText().equals("Connected") && numToRestartDiscovery >= TIMES_TO_SEARCH && studentIsConnect == false){
                         progressBar.setVisibility(View.INVISIBLE);
                         read_msg_box.setText("Teacher not found, try again");
+                        btnDiscover.setVisibility(View.VISIBLE);
                         System.out.println("2 numToRestartDiscovery: " + numToRestartDiscovery);
                     }
                     break;
@@ -197,6 +198,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
         numToRestartDiscovery = 0;
         endButtonPressed = false;
         btnOnOff = findViewById(R.id.onOff);
+        btnOnOff.setVisibility(View.INVISIBLE);
         btnDiscover = findViewById(R.id.discover);
         btnEnd = findViewById(R.id.endButton);
         btnEnd.setOnClickListener(this);
@@ -319,6 +321,8 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
             if(checkPresenceRunnable!=null)
                 checkPresenceRunnable.cancelTimer();
             if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
+                btnDiscover.setVisibility(View.VISIBLE);
+                btnEnd.setVisibility(View.INVISIBLE);
                 progressBar.setVisibility(View.INVISIBLE);
                 mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
                     @Override
@@ -388,12 +392,13 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                 @Override
                 public void onSuccess() {
                     studentConnected = true;
-                    Toast.makeText(getApplicationContext(), "Connected to: " + deviceNameArray[0], Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Connected to " + deviceNameArray[0], Toast.LENGTH_SHORT).show();
                     studentIsConnect = true;
                     numToRestartDiscovery=0;
                     //connectionStatus.setText("Connected to :" + deviceNameArray[0]);
-                    read_msg_box.setText("Connected to :" + deviceNameArray[0]);
+                    read_msg_box.setText("Connected to " + deviceNameArray[0]);
                     progressBar.setVisibility(View.INVISIBLE);
+                    btnDiscover.setVisibility(View.INVISIBLE);
                     //listView.setVisibility(View.VISIBLE);
                 }
 
@@ -423,8 +428,8 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                         //Toast.makeText(getApplicationContext(), "Group Created" , Toast.LENGTH_SHORT).show();
                         haveGroup = true;
                         endStrDate = null;
-
-                        setmBtn_start_toResume(1);
+                        btnDiscover.setVisibility(View.INVISIBLE);
+                        //setmBtn_start_toResume(1);
 
                         /*stdStatusCountMap = new HashMap<>();
                         System.out.println("AAAAAAAAAAAAAAAAAAAAAAA");
@@ -460,6 +465,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                         progressBar.setVisibility(View.VISIBLE);
                         listView.setVisibility(View.INVISIBLE);
                         btnEnd.setVisibility(View.VISIBLE);
+                        btnDiscover.setVisibility(View.INVISIBLE);
                     }
 
                     @Override
@@ -504,7 +510,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
         mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                setmBtn_start_toResume(0);
+                //setmBtn_start_toResume(0);
                 //Toast.makeText(getApplicationContext(), "Group Removed", Toast.LENGTH_SHORT).show();
                 haveGroup = false;
                 //clients.clear();
@@ -1131,22 +1137,22 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onBackPressed() {
-        if(connectionStatus.getText().equals("Connected")) {
+        if(connectionStatus.getText().equals("Connected") && SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
             new AlertDialog.Builder(this)
                     .setTitle("Really Exit?")
-                    .setMessage("Are you sure you want to exit?")
+                    .setMessage("Are you sure you want to exit?      " +
+                            "The presence test will end!")
                     .setNegativeButton(android.R.string.no, null)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface arg0, int arg1) {
-                            //getApplicationContext().super.onBackPressed();
                             backIsPressed = true;
                             onBtnEndClick(0);
 
                         }
                     }).create().show();
         }
-        else
+        else if(wifiManager.isWifiEnabled())
             MyWiFiActivity.super.onBackPressed();
     }
 
@@ -1320,20 +1326,20 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
 
             if(connectionStatus.getText().equals("Device Disconnected") &&
                     SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null){
-                resetListView(0);
-                if(endButtonPressed == false /*&& studentConnected==true*/){
-                    //removeGroup();
+                read_msg_box.setText("");
+                //resetListView(0);
+                if(endButtonPressed == false && studentConnected==false){
                     studentConnected = false;
-                    //numToRestartDiscovery = 0;
-
+                    numToRestartDiscovery = 0;
+                    btnDiscover.setVisibility(View.INVISIBLE);
                     checkPresenceRunnable = new CheckPresenceRunnable(MyWiFiActivity.this);
-
+                    read_msg_box.setText("Searching...");
                     discoverAndCreateGroup();
                 }
                 else {
                     studentConnected = false;
-                    if(!read_msg_box.getText().equals("Searching..."))
-                        btnEnd.setVisibility(View.INVISIBLE);
+                    //if(!read_msg_box.getText().equals("Searching..."))
+                      //  btnEnd.setVisibility(View.INVISIBLE);
                     btnDiscover.setVisibility(View.VISIBLE);
                 }
 
