@@ -56,13 +56,14 @@
             android:id="@+id/discover"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/onOff"
-            android:layout_alignBottom="@+id/onOff"
+            android:layout_above="@+id/peerListView"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="-144dp"
             android:fontFamily="casual"
             android:text="Search"
             android:textAllCaps="false"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp" />
 
 
         <ListView
@@ -97,16 +98,15 @@
             android:fontFamily="casual"
             android:text="@android:string/cancel"
             android:textAllCaps="false"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/connectionStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="15dp"
+            android:layout_above="@+id/onOff"
+            android:layout_marginBottom="-55dp"
             android:fontFamily="casual"
             android:text="Connection Status"
             android:textAlignment="center"

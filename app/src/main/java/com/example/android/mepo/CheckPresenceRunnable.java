@@ -44,7 +44,7 @@ public class CheckPresenceRunnable extends TimerTask implements Runnable {
 
         afterFiveHouers++;
         //Checks if it has been 5 hours since the start of the lecture so that the group is removed automatically
-        if(afterFiveHouers >=60)
+        if(afterFiveHouers >=20)
             state = 2;
 
 

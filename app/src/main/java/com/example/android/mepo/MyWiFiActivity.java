@@ -63,23 +63,16 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
 
     Button btnOnOff, btnDiscover, btnEnd;
     ImageView iv_connect;
-    ListView listView;
-    ListView grouplistView;
-    TextView read_msg_box, tv_connectedStudents;
-    TextView connectionStatus;
+    ListView listView, grouplistView;
+    TextView read_msg_box, tv_connectedStudents, connectionStatus;
     ProgressBar progressBar;
 
     List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
     List<WifiP2pDevice> clients = new ArrayList<WifiP2pDevice>();
-    ArrayAdapter<String> adapter;
-    ArrayAdapter<String> groupAdapter;
-    String[] deviceNameArray;
-    String[] groupDevicesNamesArray;
-    String[] groupDeviceIsCorrectStudent;
+    ArrayAdapter<String> adapter, groupAdapter;
+    String[] deviceNameArray, groupDevicesNamesArray, groupDeviceIsCorrectStudent;
     Map<String, int[]> stdStatusCountMap ;
-    WifiP2pDevice[] deviceArray;
-    WifiP2pDevice[] groupDeviceArray;
-
+    WifiP2pDevice[] deviceArray, groupDeviceArray;
 
     static boolean haveGroup = false;
     static boolean endButtonPressed = false;
@@ -87,8 +80,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
     static boolean isGroupOwner;
     boolean backIsPressed = false;
     final int TIMES_TO_SEARCH = 10;
-    String courseT_ID;
-    String c_id;
+    String courseT_ID, c_id;
     int l_number;
     ArrayList<String> list_of_students_in_course = new ArrayList<String>();
 
@@ -124,14 +116,12 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                 case TASK_COMPLETE:
 
                     read_msg_box.setVisibility(View.VISIBLE);
-                    //read_msg_box.setText(currentDate);
 
                     if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null && endButtonPressed == false)
                         checkPresence();
 
                     else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null && endButtonPressed == true){
                         endStrDate = currentDate;
-                        //Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
                         checkPresenceRunnable.cancelTimer();
                         dateFlag = 0;
                     }
@@ -161,7 +151,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                 case TASK_TERMINATED:
 
                     Toast.makeText(getApplicationContext(), "Due to inactivity of 5 hours the registration has been discontinued.", Toast.LENGTH_SHORT).show();
-                    onBtnEndClick(1);
+                    onBtnEndClick(2);
                     break;
 
                 default:
@@ -183,7 +173,6 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_wi_fi);
 
-        //if(!activityAlreadyCreated)
         initWork();
         exqListener();
 
@@ -196,7 +185,6 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
 
 
     public void initWork(){
-        //activityAlreadyCreated = true;
         System.out.println("initWork");
         list_of_students_in_course = getIntent().getStringArrayListExtra("EXTRA_STUDENTS_IN_COURSE");
         numToRestartDiscovery = 0;
@@ -206,6 +194,9 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
         btnDiscover = findViewById(R.id.discover);
         btnEnd = findViewById(R.id.endButton);
         btnEnd.setOnClickListener(this);
+        connectionStatus = findViewById(R.id.connectionStatus);
+        read_msg_box = findViewById(R.id.readMsg);
+        read_msg_box.setVisibility(View.INVISIBLE);
 
         if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null) {
             c_id = getIntent().getStringExtra("EXTRA_STUDENT_COURSE_NAME_ID").substring(7,10);
@@ -230,9 +221,6 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         courseT_ID =  getIntent().getStringExtra("EXTRA_TEACHER_ID");
-        connectionStatus = findViewById(R.id.connectionStatus);
-        read_msg_box = findViewById(R.id.readMsg);
-        read_msg_box.setVisibility(View.INVISIBLE);
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (!wifiManager.isWifiEnabled()) {
@@ -291,30 +279,13 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                 System.out.println("Discover");
                 read_msg_box.setText("");
                 numToRestartDiscovery = 0;
-                //if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null)
 
                 checkPresenceRunnable = new CheckPresenceRunnable(MyWiFiActivity.this);
-
 
                 endButtonPressed = false;
                 discoverAndCreateGroup();
             }
         });
-
-        //obtain a peer from the WifiP2pDeviceList
-        /*if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null){
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    if (deviceNameArray[0] != null ) {
-                        connectToTeacherGroup(position);
-                    }
-
-                }
-            });
-        }*/
-
-
 
     }
 
@@ -324,7 +295,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
 
     public void onBtnEndClick(int zeroForBtn){
         endButtonPressed = true;
-        if(!connectionStatus.getText().equals("Device Disconnected") || zeroForBtn==0) {
+        if(!connectionStatus.getText().equals("Device Disconnected") || zeroForBtn==0 || zeroForBtn==2) {
             //Toast.makeText(getApplicationContext(), "Timer canceled", Toast.LENGTH_SHORT).show();
             //progressBar.setVisibility(View.INVISIBLE);
             read_msg_box.setText("");
@@ -353,35 +324,38 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
         if(checkPresenceRunnable != null && SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null) {
             endStrDate = currentDate;
             dateFlag = 0;
+            if(zeroForBtn != 2) {
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_export_report, null);
+                TextView mText = mView.findViewById(R.id.txt_exportreport);
+                mText.setText("Do you want to save the lecture details?");
+                Button mBtnOk = mView.findViewById(R.id.btn_ok);
+                Button mBtnCancel = mView.findViewById(R.id.btn_cancel);
 
-            AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-            View mView = getLayoutInflater().inflate(R.layout.dialog_export_report, null);
-            TextView mText = mView.findViewById(R.id.txt_exportreport);
-            mText.setText("Do you want to save the lecture details?");
-            Button mBtnOk = mView.findViewById(R.id.btn_ok);
-            Button mBtnCancel = mView.findViewById(R.id.btn_cancel);
+                mBuilder.setView(mView);
+                final AlertDialog dialog = mBuilder.create();
+                dialog.show();
 
-            mBuilder.setView(mView);
-            final AlertDialog dialog = mBuilder.create();
-            dialog.show();
-
-            mBtnOk.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getMaxLecture();
-                    //checkPresence();
+                mBtnOk.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        getMaxLecture();
+                        //checkPresence();
                     /*Toast.makeText(getApplicationContext(), "The report has been sent to the department",
                             Toast.LENGTH_SHORT).show();*/
-                    dialog.dismiss();
-                }
-            });
-            mBtnCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    removeGroup();
-                    dialog.dismiss();
-                }
-            });
+                        dialog.dismiss();
+                    }
+                });
+                mBtnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeGroup();
+                        dialog.dismiss();
+                    }
+                });
+            }
+            else
+                getMaxLecture();
 
         }
         
@@ -406,11 +380,9 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                     iv_connect.setVisibility(View.VISIBLE);
                     studentIsConnect = true;
                     numToRestartDiscovery=0;
-                    //connectionStatus.setText("Connected to :" + deviceNameArray[0]);
                     read_msg_box.setText("Connected to " + deviceNameArray[0]);
                     progressBar.setVisibility(View.INVISIBLE);
                     btnDiscover.setVisibility(View.INVISIBLE);
-                    //listView.setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -740,9 +712,9 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                             appendStatusCount[0]++;
                             //stdStatusCountMap.remove(stdInCourse);
                             stdStatusCountMap.put(stdInCourse, appendStatusCount);
-                            System.out.println("stdStatusCountMap " + stdStatusCountMap.toString());
+                            //System.out.println("stdStatusCountMap " + stdStatusCountMap.toString());
                             System.out.println("stdInCourse: " + stdInCourse + " StatusCount: " + appendStatusCount[0]);
-                            System.out.println("stdInCourse 2: " + stdInCourse + " StatusCount: " + stdStatusCountMap.get(stdInCourse)[0]);
+                            //System.out.println("stdInCourse 2: " + stdInCourse + " StatusCount: " + stdStatusCountMap.get(stdInCourse)[0]);
                         }
                     }
                 }
@@ -1351,8 +1323,11 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 else {
                     studentConnected = false;
-                    if(!read_msg_box.getText().equals("Searching...") && !connectionStatus.getText().equals("Connected"))
+                    if(!read_msg_box.getText().equals("Searching...")) {
                         btnEnd.setVisibility(View.INVISIBLE);
+                        if(checkPresenceRunnable != null && endButtonPressed == false)
+                            checkPresenceRunnable.cancelTimer();
+                    }
                     btnDiscover.setVisibility(View.VISIBLE);
                 }
 
@@ -1365,10 +1340,10 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                 //btnDiscover.setVisibility(View.INVISIBLE);
             }
             else if(SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() == null &&
-                    connectionStatus.getText().equals("Device Disconnected")){
+                    connectionStatus.getText().equals("Device Disconnected") ){
                 btnEnd.setVisibility(View.INVISIBLE);
-                //btnDiscover.setVisibility(View.VISIBLE);
             }
+
 
             if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner && haveGroup == true){
                 btnDiscover.setVisibility(View.INVISIBLE);
@@ -1379,7 +1354,13 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
 
             }else if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner == false) {
                 btnEnd.setVisibility(View.VISIBLE);
-                //connectionStatus.setText("Connected to :" + deviceNameArray[0]);
+                if(connectionStatus.getText().equals("Connected")){
+                    iv_connect.setVisibility(View.VISIBLE);
+                    studentIsConnect = true;
+                    read_msg_box.setVisibility(View.VISIBLE);
+                    read_msg_box.setText("Connected to " + courseT_ID);
+                    btnDiscover.setVisibility(View.INVISIBLE);
+                }
                 if(deviceNameArray == null) {
                     // set the t_id for the student listView
                     resetListView(2);
@@ -1387,7 +1368,6 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
 
             }
 
-            //Toast.makeText(getApplicationContext(),connectionStatus.getText() , Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -1447,123 +1427,15 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
     }
 
 
-//////////////////////////////////////////////////////// Thread zone /////////////////////////////////////////////////////////////////
-
-
-
-    /*Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what)
-            {
-                case MESSAGE_READ:
-                    byte[] readBuff = (byte[]) msg.obj;
-                    String tempMsg = new String(readBuff,0,msg.arg1);
-                    read_msg_box.setText(tempMsg);
-                    break;
-            }
-            return true;
-        }
-    });*/
 
 
 
 
-    /*
-     * Create a server socket and wait for client connections. This
-     * call blocks until a connection is accepted from a client
-     */
-    /*public class ServerClass extends Thread{
-        Socket socket = null;
-        ServerSocket serverSocket;
-
-        @Override
-        public void run() {
-            try {
-                serverSocket = new ServerSocket(); // <-- create an unbound socket first
-                serverSocket.setReuseAddress(true);
-                serverSocket.bind(new InetSocketAddress(8888)); // <-- now bind it
-                //serverSocket = new ServerSocket(8888);
-                socket = serverSocket.accept();
-                sendReceive = new SendReceive(socket);
-                sendReceive.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-                try {
-                    serverSocket.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
-    }
-
-
-    private class SendReceive extends Thread{
-        private Socket socket;
-        private InputStream inputStream;
-        private OutputStream outputStream;
-
-        public SendReceive(Socket skt){
-            socket = skt;
-            try {
-                inputStream = socket.getInputStream();
-                outputStream = socket.getOutputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void run() {
-            byte[] buffer = new byte[1024];
-            int bytes;
-
-            while(socket != null){
-                try {
-                    bytes = inputStream.read(buffer);
-                    if(bytes > 0){
-                        handler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        public void write(byte[] bytes){
-            try {
-                outputStream.write(bytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
 
 
 
-    /*public class ClientClass extends Thread{
-        Socket socket = null;
-        String hostAdd;
 
-        public ClientClass(InetAddress hosAddress){
-            hostAdd = hosAddress.getHostAddress();
-            socket = new Socket();
-        }
 
-        @Override
-        public void run() {
-            try {
-                /**
-                 * Create a client socket with the host,
-                 * port, and timeout information.
-                 */
-                /*socket.connect(new InetSocketAddress(hostAdd,8888),500);
-                sendReceive = new SendReceive(socket);
-                sendReceive.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
+
+
 }

@@ -92,7 +92,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 mActivity.connectionStatus.setText("Connected");
                 mManager.requestConnectionInfo(mChannel, mActivity.connectionInfoListener);
                 if(isGroupOwner) {
-                    //mActivity.connectionStatus.setText("Host");
                     mManager.requestGroupInfo(mChannel, mActivity.groupInfoListener);
                 }
 
