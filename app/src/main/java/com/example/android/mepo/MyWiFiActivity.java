@@ -62,7 +62,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
     IntentFilter mIntentFilter;
 
     Button btnOnOff, btnDiscover, btnEnd;
-    ImageView iv_connect;
+    ImageView iv_connect, iv_noConnect;
     ListView listView, grouplistView;
     TextView read_msg_box, tv_connectedStudents, connectionStatus;
     ProgressBar progressBar;
@@ -203,7 +203,9 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
             listView = findViewById(R.id.peerListView);
             listView.setVisibility(View.INVISIBLE);
             iv_connect = findViewById(R.id.iv_connect);
+            iv_noConnect = findViewById(R.id.iv_noConnect);
             iv_connect.setVisibility(View.INVISIBLE);
+            iv_noConnect.setVisibility(View.INVISIBLE);
             if(tv_connectedStudents != null)
                 tv_connectedStudents.setVisibility(View.INVISIBLE);
             isGroupOwner = false;
@@ -377,6 +379,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                 public void onSuccess() {
                     studentConnected = true;
                     Toast.makeText(getApplicationContext(), "Connected to " + deviceNameArray[0], Toast.LENGTH_SHORT).show();
+                    iv_noConnect.setVisibility(View.INVISIBLE);
                     iv_connect.setVisibility(View.VISIBLE);
                     studentIsConnect = true;
                     numToRestartDiscovery=0;
@@ -445,6 +448,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                     public void onSuccess() {
                         //Toast.makeText(getApplicationContext(), "Searching ...", Toast.LENGTH_LONG).show();
                         read_msg_box.setText("Searching...");
+                        iv_noConnect.setVisibility(View.INVISIBLE);
                         progressBar.setVisibility(View.VISIBLE);
                         listView.setVisibility(View.INVISIBLE);
                         btnEnd.setVisibility(View.VISIBLE);
@@ -1249,7 +1253,6 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                                 groupDeviceArray[index] = device;
                                 index++;
                                 //System.out.println("index " + index);
-                                //connectionStatus.setText("Host");
                                 btnEnd.setVisibility(View.VISIBLE);
                                 //Toast.makeText(getApplicationContext(), "group index " + index, Toast.LENGTH_SHORT).show();
                                 //Toast.makeText(getApplicationContext(), "group Found " + device.deviceName, Toast.LENGTH_SHORT).show();
@@ -1311,6 +1314,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
             if(connectionStatus.getText().equals("Device Disconnected") &&
                     SharedPrefManager.getInstance(getApplicationContext()).getUserIsStudent() != null){
                 iv_connect.setVisibility(View.INVISIBLE);
+                iv_noConnect.setVisibility(View.VISIBLE);
                 read_msg_box.setText("");
                 //resetListView(0);
                 if(endButtonPressed == false && studentConnected==false){
@@ -1355,6 +1359,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
             }else if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner == false) {
                 btnEnd.setVisibility(View.VISIBLE);
                 if(connectionStatus.getText().equals("Connected")){
+                    iv_noConnect.setVisibility(View.INVISIBLE);
                     iv_connect.setVisibility(View.VISIBLE);
                     studentIsConnect = true;
                     read_msg_box.setVisibility(View.VISIBLE);
