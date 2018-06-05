@@ -217,6 +217,8 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
             c_id = getIntent().getStringExtra("EXTRA_TEACHER_COURSE_NAME_ID");
             c_id = c_id.substring(c_id.length()-5,c_id.length()-2);
             //l_number = getIntent().getIntExtra("EXTRA_LECTURE_NUMBER",l_number) ;
+            if(iv_noConnect != null)
+                iv_noConnect.setVisibility(View.INVISIBLE);
             grouplistView = findViewById(R.id.peerListView);
             isGroupOwner = true;
             btnDiscover.setVisibility(View.INVISIBLE);
@@ -307,6 +309,7 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                 btnDiscover.setVisibility(View.VISIBLE);
                 btnEnd.setVisibility(View.INVISIBLE);
                 progressBar.setVisibility(View.INVISIBLE);
+                iv_noConnect.setVisibility(View.VISIBLE);
                 mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
                     @Override
                     public void onSuccess() {

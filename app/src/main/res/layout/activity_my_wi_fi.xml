@@ -131,6 +131,7 @@
             android:id="@+id/iv_noConnect"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:visibility="invisible"
             android:layout_alignTop="@+id/iv_connect"
             android:layout_centerHorizontal="true"
             app:srcCompat="@drawable/nowifi2" />
