@@ -309,7 +309,6 @@ public class MyWiFiActivity extends AppCompatActivity implements View.OnClickLis
                 btnDiscover.setVisibility(View.VISIBLE);
                 btnEnd.setVisibility(View.INVISIBLE);
                 progressBar.setVisibility(View.INVISIBLE);
-                iv_noConnect.setVisibility(View.VISIBLE);
                 mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
                     @Override
                     public void onSuccess() {
